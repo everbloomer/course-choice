@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>과목 선택 연습실 — 입학사정관은 내 선택을 어떻게 읽을까?</title>
+<meta name="description" content="고교학점제 과목 선택 딜레마를 직접 경험하고, 서울대·동국대 학생부종합전형 가이드북을 근거로 효율 위주 선택의 한계를 확인하는 연습 페이지">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+:root{
+  --ink:#1b2333; --ink2:#4a5468; --muted:#7a8396; --line:#e3e6ec; --bg:#f6f7f9; --card:#ffffff;
+  --navy:#1f3a5f; --navy2:#2d5486;
+  --calc:#6b7a90; --calc-bg:#eef1f5;          /* 내신 계산기의 눈 */
+  --adm:#0f7a5c;  --adm-bg:#e7f5ef;           /* 입학사정관의 눈 */
+  --good:#0f7a5c; --mixed:#b7791f; --risky:#c0392b;
+  --good-bg:#e7f5ef; --mixed-bg:#fdf3e1; --risky-bg:#fbeaea;
+  --snu:#1f3a5f; --dgu:#b4541a; --skku:#2e6b3a; --arori:#5b3f8f; --moe:#555;
+  --radius:14px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:Pretendard,-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;color:var(--ink);background:var(--bg);line-height:1.65;word-break:keep-all}
+a{color:var(--navy2)}
+header.top{background:var(--navy);color:#fff;padding:22px 20px 0}
+header.top .wrap{max-width:980px;margin:0 auto}
+header.top h1{margin:0;font-size:1.45rem;letter-spacing:-.02em}
+header.top p{margin:.35rem 0 1rem;color:#c9d6ea;font-size:.95rem}
+nav.tabs{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+nav.tabs button{flex:0 0 auto;border:0;background:transparent;color:#c9d6ea;padding:10px 14px;font:inherit;font-size:.93rem;border-radius:10px 10px 0 0;cursor:pointer}
+nav.tabs button.on{background:var(--bg);color:var(--navy);font-weight:700}
+main{max-width:980px;margin:0 auto;padding:22px 16px 60px}
+section.view{display:none}
+section.view.on{display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px 22px;margin:0 0 16px}
+.card h2{margin:0 0 .5rem;font-size:1.25rem;letter-spacing:-.02em}
+.card h3{margin:1rem 0 .4rem;font-size:1.05rem}
+.lead{font-size:1.02rem;color:var(--ink2)}
+.small{font-size:.86rem;color:var(--muted)}
+.pill{display:inline-block;font-size:.76rem;font-weight:700;padding:2px 9px;border-radius:999px;background:var(--calc-bg);color:var(--ink2);margin-right:4px;vertical-align:middle}
+.btn{display:inline-flex;align-items:center;gap:6px;border:0;border-radius:10px;padding:11px 18px;font:inherit;font-weight:700;cursor:pointer;background:var(--navy);color:#fff}
+.btn:hover{background:var(--navy2)}
+.btn.ghost{background:#fff;color:var(--navy);border:1.5px solid var(--navy)}
+.btn.ghost:hover{background:#f0f4fa}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:720px){.grid2{grid-template-columns:1fr}}
+
+/* 진로 선택 */
+.personas{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin-top:12px}
+.persona{border:1.5px solid var(--line);border-radius:12px;padding:16px;background:#fff;cursor:pointer;text-align:left;font:inherit;color:inherit}
+.persona:hover{border-color:var(--navy2);box-shadow:0 2px 10px rgba(31,58,95,.08)}
+.persona b{display:block;font-size:1.02rem;margin-bottom:4px}
+.persona span{font-size:.88rem;color:var(--ink2)}
+
+/* 진행 */
+.progress{height:6px;background:var(--line);border-radius:99px;overflow:hidden;margin:4px 0 14px}
+.progress i{display:block;height:100%;background:var(--navy2);transition:width .3s}
+.step-label{font-size:.85rem;color:var(--muted);font-weight:600}
+
+/* 딜레마 */
+.situation{background:#fafbfc;border-left:4px solid var(--navy2);padding:12px 16px;border-radius:0 10px 10px 0;margin:10px 0}
+table.facts{width:100%;border-collapse:collapse;margin:10px 0;font-size:.92rem}
+table.facts th,table.facts td{border-bottom:1px solid var(--line);padding:7px 8px;text-align:left;vertical-align:top}
+table.facts th{background:#f3f5f8;font-weight:700;color:var(--ink2);font-size:.85rem}
+.opts{display:grid;gap:10px;margin-top:12px}
+.opt{border:1.5px solid var(--line);border-radius:12px;padding:13px 16px;background:#fff;text-align:left;font:inherit;color:inherit;cursor:pointer;display:flex;gap:12px;align-items:flex-start}
+.opt:hover:not(:disabled){border-color:var(--navy2);background:#f8fafd}
+.opt .k{flex:0 0 28px;height:28px;border-radius:50%;background:var(--calc-bg);display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--navy)}
+.opt.chosen{border-color:var(--navy);background:#f0f4fa}
+.opt:disabled{cursor:default}
+.opt .t b{display:block}
+.opt .t span{font-size:.9rem;color:var(--ink2)}
+textarea{width:100%;min-height:74px;border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;font:inherit;font-size:.95rem;resize:vertical}
+textarea:focus{outline:none;border-color:var(--navy2)}
+
+/* 두 개의 눈 */
+.eyes{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0}
+@media (max-width:720px){.eyes{grid-template-columns:1fr}}
+.eye{border-radius:12px;padding:14px 16px}
+.eye h4{margin:0 0 6px;font-size:.95rem;display:flex;align-items:center;gap:6px}
+.eye.calc{background:var(--calc-bg)} .eye.calc h4{color:var(--calc)}
+.eye.adm{background:var(--adm-bg)} .eye.adm h4{color:var(--adm)}
+.eye p{margin:0;font-size:.93rem}
+.meter{display:flex;gap:3px;margin:8px 0 2px}
+.meter i{flex:1;height:8px;border-radius:3px;background:rgba(0,0,0,.08)}
+.eye.calc .meter i.f{background:var(--calc)} .eye.adm .meter i.f{background:var(--adm)}
+.verdict{display:inline-block;font-weight:800;font-size:.85rem;padding:3px 10px;border-radius:99px}
+.verdict.good{background:var(--good-bg);color:var(--good)}
+.verdict.mixed{background:var(--mixed-bg);color:var(--mixed)}
+.verdict.risky{background:var(--risky-bg);color:var(--risky)}
+
+/* 근거 카드 */
+.ev{border:1px solid var(--line);border-left:5px solid var(--snu);border-radius:10px;padding:11px 14px;margin:8px 0;background:#fff}
+.ev.dgu{border-left-color:var(--dgu)} .ev.skku{border-left-color:var(--skku)} .ev.arori{border-left-color:var(--arori)} .ev.moe{border-left-color:var(--moe)}
+.ev .src{font-size:.8rem;font-weight:700;color:var(--snu)}
+.ev.dgu .src{color:var(--dgu)} .ev.skku .src{color:var(--skku)} .ev.arori .src{color:var(--arori)} .ev.moe .src{color:var(--moe)}
+.ev q{display:block;font-weight:600;margin:4px 0;quotes:"“" "”"}
+.ev p{margin:4px 0 0;font-size:.92rem;color:var(--ink2)}
+.ev a{font-size:.85rem}
+
+/* 리포트 */
+.bars{display:grid;gap:12px;margin:10px 0}
+.bar{display:grid;grid-template-columns:150px 1fr 52px;gap:10px;align-items:center;font-size:.93rem}
+@media (max-width:560px){.bar{grid-template-columns:110px 1fr 44px}}
+.bar .track{height:16px;background:var(--line);border-radius:99px;overflow:hidden}
+.bar .track i{display:block;height:100%;border-radius:99px}
+.bar.calc .track i{background:var(--calc)} .bar.adm .track i{background:var(--adm)}
+.bar b{text-align:right}
+table.rep{width:100%;border-collapse:collapse;font-size:.9rem}
+table.rep th,table.rep td{border-bottom:1px solid var(--line);padding:8px 6px;text-align:left;vertical-align:top}
+table.rep th{background:#f3f5f8;font-size:.82rem;color:var(--ink2)}
+ul.iq{padding-left:1.2rem;margin:.4rem 0} ul.iq li{margin:.35rem 0}
+
+/* 증명 노트 */
+.proof{counter-reset:p}
+.premise{position:relative;padding:14px 16px 14px 58px;border:1px solid var(--line);border-radius:12px;background:#fff;margin:10px 0}
+.premise::before{counter-increment:p;content:counter(p);position:absolute;left:14px;top:14px;width:30px;height:30px;border-radius:50%;background:var(--navy);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center}
+.premise h3{margin:0 0 4px;font-size:1.02rem}
+.premise.conclusion{background:#f0f4fa;border-color:var(--navy2)}
+.premise.conclusion::before{content:"∴"}
+details{border:1px solid var(--line);border-radius:10px;padding:8px 12px;margin:8px 0;background:#fff}
+details summary{cursor:pointer;font-weight:700;color:var(--navy)}
+.calcbox{background:#f8fafc;border:1px dashed var(--calc);border-radius:10px;padding:12px 14px;margin:10px 0}
+.calcbox input[type=range]{width:100%}
+.calcbox .out{font-size:1.05rem;font-weight:700;color:var(--navy)}
+
+/* 자료실 */
+.subtabs{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 12px}
+.subtabs button{border:1.5px solid var(--line);background:#fff;border-radius:99px;padding:6px 14px;font:inherit;font-size:.88rem;cursor:pointer}
+.subtabs button.on{background:var(--navy);border-color:var(--navy);color:#fff}
+.case{border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:10px 0;background:#fff}
+.case h4{margin:0 0 4px}
+table.mini{border-collapse:collapse;font-size:.85rem;margin:8px 0;width:100%}
+table.mini th,table.mini td{border:1px solid var(--line);padding:4px 6px;text-align:center}
+table.mini th{background:#f3f5f8}
+.video{position:relative;padding-top:56.25%;border-radius:12px;overflow:hidden;background:#000;margin:10px 0}
+.video iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.stat{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:10px 0}
+.stat div{background:#f8fafc;border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.stat b{display:block;font-size:1.3rem;color:var(--skku)}
+.stat span{font-size:.84rem;color:var(--ink2)}
+.note{background:var(--mixed-bg);border-radius:10px;padding:10px 14px;font-size:.88rem;color:#7a4f0c;margin:10px 0}
+footer{max-width:980px;margin:0 auto;padding:0 16px 40px;font-size:.8rem;color:var(--muted)}
+
+@media print{
+  header.top nav,.noprint,.btn{display:none!important}
+  body{background:#fff}
+  .card{border:0;padding:0 0 10px}
+  section.view{display:none!important}
+  section.view.print-on{display:block!important}
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <h1>과목 선택 연습실</h1>
+    <p>내가 고른 과목, 입학사정관은 어떻게 읽을까? — 서울대·동국대 가이드북으로 확인하는 과목 선택</p>
+    <nav class="tabs" id="tabs">
+      <button data-v="play" class="on">① 연습하기</button>
+      <button data-v="proof">② 증명 노트</button>
+      <button data-v="library">③ 근거 자료실</button>
+      <button data-v="attend">④ 출결 이야기</button>
+      <button data-v="teacher">교사용 안내</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <!-- ① 연습하기 -->
+  <section class="view on" id="v-play"><div id="app"></div></section>
+
+  <!-- ② 증명 노트 -->
+  <section class="view" id="v-proof">
+    <div class="card">
+      <h2>증명 노트: “효율만 따진 과목 선택”은 왜 우수하게 평가받지 못할까?</h2>
+      <p class="lead">아래 다섯 개의 전제를 차례로 확인하면 결론이 나옵니다. 각 전제에는 대학이 직접 펴낸 자료의 쪽수를 붙였습니다. 직접 펼쳐 확인해 보세요.</p>
+    </div>
+    <div class="proof" id="proofBox"></div>
+  </section>
+
+  <!-- ③ 근거 자료실 -->
+  <section class="view" id="v-library">
+    <div class="card">
+      <h2>근거 자료실</h2>
+      <p class="small">이 페이지에서 인용한 모든 근거입니다. 원문은 짧게만 옮기고 나머지는 요약했으므로, 정확한 맥락은 원자료의 해당 쪽에서 확인하세요.</p>
+      <div class="subtabs" id="libTabs">
+        <button data-k="snu" class="on">서울대 가이드북</button>
+        <button data-k="dgu">동국대 가이드북</button>
+        <button data-k="arori">아로리 ‘나도 입학사정관’</button>
+        <button data-k="etc">성균관대·교육부</button>
+      </div>
+      <div id="libBox"></div>
+    </div>
+  </section>
+
+  <!-- ④ 출결 -->
+  <section class="view" id="v-attend"><div id="attendBox"></div></section>
+
+  <!-- 교사용 -->
+  <section class="view" id="v-teacher">
+    <div class="card">
+      <h2>교사용 안내</h2>
+      <h3>수업 흐름 (50분 기준)</h3>
+      <table class="facts">
+        <tr><th style="width:110px">시간</th><th>활동</th></tr>
+        <tr><td>5분</td><td>도입: “내신 잘 나오는 과목을 고르면 손해일까?” 손들기 투표</td></tr>
+        <tr><td>20분</td><td>① 연습하기: 진로 유형 하나를 골라 딜레마 5개 해결. 선택마다 ‘내신 계산기의 눈’과 ‘입학사정관의 눈’을 비교하게 합니다.</td></tr>
+        <tr><td>10분</td><td>선택 이유 쓰기와 리포트 확인. 예상 면접 질문에 짝과 함께 답해 봅니다.</td></tr>
+        <tr><td>10분</td><td>② 증명 노트를 함께 읽으며 전제 1~5를 정리하고 결론을 학생 말로 바꿔 씁니다.</td></tr>
+        <tr><td>5분</td><td>④ 출결 이야기 영상 시청 후 한 줄 정리</td></tr>
+      </table>
+      <h3>지도할 때 짚어 줄 점</h3>
+      <ul>
+        <li>이 연습의 결론은 <b>“어려운 과목이 정답”이 아닙니다.</b> 동국대 가이드북은 진로와 무관하게 어려워 보이는 과목만 고른 사례를 ‘아쉬운 사례’로 제시합니다(58·60쪽). 핵심은 <b>수강 이유의 타당성</b>과 <b>충실한 이수</b>입니다.</li>
+        <li>성적이 무의미하다는 뜻도 아닙니다. 서울대는 모든 교과의 3년간 성취를 반영하며, 고르게 우수한 학생을 긍정적으로 평가한다고 밝힙니다(70쪽 Q9).</li>
+        <li>점수(내신 효율 지수·학종 관점 지수)는 토론을 위한 장치일 뿐, 실제 대학의 평가 점수가 아닙니다.</li>
+        <li>가이드북의 사례는 2015 개정 교육과정 과목명(물리학Ⅰ·Ⅱ, 화학Ⅱ, 미적분 등)입니다. 이 페이지의 딜레마는 2022 개정 교육과정 과목명으로 바꿔 구성했으며, 두 체계의 과목이 정확히 일대일로 대응하지는 않습니다.</li>
+        <li>2028학년도 이후 대학별 전공 연계 권장과목은 각 대학이 2022 개정 기준으로 따로 안내하므로, 학생이 희망 대학의 최신 안내를 직접 확인하게 해 주세요.</li>
+      </ul>
+      <h3>근거 자료 목록</h3>
+      <ul class="small" id="srcList"></ul>
+    </div>
+  </section>
+</main>
+
+<footer>
+  이 페이지는 학생 진로·진학 지도를 위한 교육용 연습 자료이며, 대학의 공식 평가 도구가 아닙니다. 인용 자료의 저작권은 각 대학에 있습니다.
+</footer>
+
+<script>
+/* =========================================================
+   0. 선생님이 직접 채우는 칸 — 유튜브 영상 요약
+   영상을 보신 뒤 핵심 내용을 한 줄씩 넣으면 ④ 출결 이야기에 표시됩니다.
+   예) "출결은 3년간의 성실성을 보여 주는 기록이라고 설명함 (03:15)"
+   ========================================================= */
+const VIDEO_ID = "TU2RqmlGEqE";
+const VIDEO_SUMMARY = [
+  // "여기에 영상 핵심 내용 1 (타임스탬프)",
+  // "여기에 영상 핵심 내용 2 (타임스탬프)",
+];
+
+/* =========================================================
+   1. 근거 자료
+   ========================================================= */
+const DOC = {
+  snu:  "서울대학교, 「2027학년도 서울대학교 학생부종합전형 안내」",
+  dgu:  "동국대학교, 「2027 동국대학교 학생부위주전형 가이드북」",
+  skku: "「성균관대 설명회 요약자료」(성균관대 공식 발표 자료 기반 요약본)",
+  moe:  "교육부(2023.12.27.), 「미래 사회를 대비하는 2028 대학입시제도 개편 확정안」",
+  arori:"서울대학교 아로리, ‘나도 입학사정관’"
+};
+const ARORI = "https://snuarori.snu.ac.kr/admissions/officer";
+
+const EV = {
+  S1:{org:"snu",page:"19쪽",title:"등급은 공식으로 계산하지 않는다",
+      quote:"단순히 비교하는 것은 적절한 평가방식이라 할 수 없습니다",
+      body:"서울대는 교과 성적을 공식으로 수치화해 기계적으로 반영하지 않습니다. 수강자 300명 과목의 1등급과 20명 과목의 3등급을 예로 들며, 수강자 수·원점수·평균·표준편차·선택 과목 특성을 함께 읽어 정성적으로 해석한다고 설명합니다."},
+  S2:{org:"snu",page:"19쪽",title:"소수·고난도 과목은 결코 불리하지 않다",
+      quote:"소규모 학교나 소수 학생들이 이수하는 과목을 수강하는 것이 서류평가에서 결코 불리하지 않습니다",
+      body:"소수 학생이 선택했거나 난도가 높은 과목은 수치가 다소 나쁠 수 있지만, 도전 정신과 호기심을 긍정적으로 평가하면 도전하지 않은 학생보다 더 좋은 평가를 할 수도 있다고 밝힙니다."},
+  S3:{org:"snu",page:"22쪽",title:"과목 선택 내역도 평가 자료다",
+      quote:"교과이수현황(위계에 따른 과목 선택 노력)",
+      body:"서울대는 ‘학업태도’를 평가하는 자료로 교과이수현황, 곧 위계에 따른 과목 선택 노력을 명시합니다. 적극적인 학업태도를 판단할 때 수업 참여도와 함께 과목 선택 내역을 종합적으로 고려합니다."},
+  S4:{org:"snu",page:"39쪽",title:"물리학Ⅰ 30명 vs 생명과학Ⅰ 150명, 어떻게 할까?",
+      quote:"등급의 불리함을 걱정하지 않아도 됩니다",
+      body:"서울대는 바로 이 딜레마(물리학Ⅰ 희망자 30명, 생명과학Ⅰ 150명)를 예로 듭니다. 입학사정관은 소수 인원 과목의 등급이 우수하게 나오기 힘들다는 것을 잘 알고 있으며, 발전할 수 있는 배움의 기회라면 어려운 과목·소수 인원 과목에도 망설이지 말고 도전하라고 권합니다."},
+  S5:{org:"snu",page:"70쪽 Q7",title:"유리한 과목만 골라 수치만 좋게 하면?",
+      quote:"유리한 과목만 이수하여 결과적으로 수치만 좋게 받으려 한 경우",
+      body:"서울대는 좋은 성적을 받는 데 유리한 과목만 이수해 수치만 좋게 받으려 한 경우 긍정적인 평가를 받지 못하기도 한다고 답합니다. 고학년이 될수록 선택에 따라 동일 과목 수강자가 줄어든다는 점도 고려해 평가합니다."},
+  S6:{org:"snu",page:"70쪽 Q8",title:"소수 과목 때문에 등급이 낮아지면?",
+      quote:"무조건 불리한 것은 아닙니다",
+      body:"함께 수강한 학생들의 구성과 수강 인원을 고려하므로 소수 학생이 이수한 과목 때문에 등급이 낮아졌다고 불리한 것은 아니며, 진학 목표를 고려해 소수 선택 과목을 이수하는 노력을 보일 때 긍정적인 평가를 받을 수도 있다고 설명합니다."},
+  S7:{org:"snu",page:"70쪽 Q9",title:"그래도 모든 교과의 성적은 반영된다",
+      quote:"모든 교과에서 고르게 우수한 면모를 지닌 학생을 긍정적으로 평가합니다",
+      body:"모집단위와 상관없이 학교생활기록부에 기재된 모든 교과의 성적이 반영됩니다. 등급·원점수·평균·표준편차·성취도별 분포비율·수강 인원을 함께 고려하며, 전공 연계 교과이수 과목이 지정된 경우 그 이수 여부도 반영합니다."},
+  S8:{org:"snu",page:"54쪽",title:"전공 연계 과목 이수 여부는 평가에 반영된다",
+      quote:"모집단위가 권장하는 과목의 이수 여부는 수시모집 서류평가 및 정시모집 교과평가에 반영합니다",
+      body:"다만 서울대는 고교 재학 중 진로가 바뀔 수 있고 학교마다 교육과정 여건이 다르다는 점을 감안하며, 권장 과목을 이수하지 못했더라도 학생이 이수한 다양한 선택과목에 나타난 적극성과 충실성을 평가에 반영한다고 밝힙니다."},
+  S9:{org:"snu",page:"51~52쪽",title:"전공 연계 교과이수 과목 표 (2027학년도, 2015 개정 기준)",
+      quote:"",
+      body:"예시 — 기계공학부: 핵심 물리학Ⅱ·미적분·기하 / 재료공학부: 핵심 미적분·기하, 권장 물리학Ⅱ·화학Ⅱ·확률과 통계 / 화학생물공학부: 핵심 미적분, 권장 확률과 통계 또는 물리학Ⅰ 또는 화학Ⅰ / 컴퓨터공학부: 핵심 미적분·확률과 통계 / 통계학과: 핵심 미적분·확률과 통계·기하 / 경제학부: 권장 미적분·확률과 통계 / 경영대학: 지정 없음(진로·적성에 따른 적극적인 선택과목 이수 권장). ※ 2028학년도 이후 입학생 기준은 서울대가 2022 개정 교육과정에 맞춰 별도 안내합니다."},
+  S10:{org:"snu",page:"48쪽",title:"선배 이야기: 1등급 인원이 2명뿐인 기피 과목",
+      quote:"",
+      body:"치의학과에 입학한 선배는 신청자가 현저히 적어 1등급 인원이 2명뿐인 물리학1을 관심 때문에 선택했고, 그 경험이 진로 결정에 큰 영향을 주었다고 회고합니다. 사회교육과 선배는 정말 관심 있는 과목을 덮어 두고 점수가 잘 나오는 과목·가산점 과목을 고르는 경향을 짚으며, 진로 탐색 과정에서 끌리는 과목을 고려해 선택하기를 권합니다."},
+  S11:{org:"snu",page:"37쪽",title:"쉬운 길보다 실력이 느는 길",
+      quote:"당장 눈앞의 점수 올리기라는 쉬운 길보다 실력을 향상시킬 수 있는 기회로 생각하고",
+      body:"교실 수업을 점수 올리기의 수단이 아니라 실력을 기르는 기회로 삼아 도전하라고 권합니다."},
+  S12:{org:"snu",page:"16쪽",title:"익숙하고 안락한 선택보다",
+      quote:"조금 어려워도 나를 발전시킬 수 있는 선택을 하십시오",
+      body:"선택의 기로에서 익숙하고 안락한 선택보다 자신을 발전시킬 수 있는 선택을 하라는 서울대의 당부입니다."},
+  S13:{org:"snu",page:"69쪽 Q3",title:"고른 교과 이수 권장",
+      quote:"",
+      body:"서울대는 교과이수기준이 지원 자격과는 별개이지만, 교육과정 안에서 폭넓은 교과를 이수하도록 권장하는 기준이라고 설명하며 지원 시점 이전까지 고른 교과목을 이수해 고른 학업소양을 갖추기를 권장합니다."},
+
+  D1:{org:"dgu",page:"20쪽",title:"평가 항목 안에 ‘과목 이수 노력’이 있다",
+      quote:"교과 : 과목 이수 노력 및 수업태도 등",
+      body:"동국대 학생부종합전형의 ‘학습의 주도성’ 평가 내용에 과목 이수 노력이 들어 있고, ‘전공수학역량’은 전공 관련 교과목의 이수 과정과 성취도, ‘전공관심도 및 진로탐색노력’은 전공 관련 선택 교과목의 탐구 과정과 노력을 봅니다."},
+  D2:{org:"dgu",page:"58쪽",title:"대학이 과목 선택을 중요하게 볼 수밖에 없는 이유",
+      quote:"모든 교과에 최선을 다하되, 자신의 진로에 필요한 역량을 키우기 위한 교과선택에 대한 고민이 필요합니다",
+      body:"교과 선택 기회가 넓어지면서 진로 고민이 과목 선택의 핵심 동기가 되었고, 그래서 대학은 과목 선택 사항을 중요하게 볼 수밖에 없다고 설명합니다. 선택과목으로 전공 관심도와 진로탐색노력을, 비주요교과로도 학습의 주도성을 평가할 수 있다고 밝힙니다."},
+  D3:{org:"dgu",page:"58쪽 Q1",title:"등급을 받기 어려운 환경인지도 본다",
+      quote:"등급을 받기 어려운 과목이라도 학습에 필요하다면 수강하는 자세가 필요하며",
+      body:"교과 성적의 정성평가는 등급뿐 아니라 원점수·과목평균·표준편차·수강자 수·이수 단위를 종합 분석하는 것이며, 수강자 수로 그 과목이 등급을 받기 어려운 환경인지도 파악한다고 설명합니다. 세특과 연계해 평가한다는 점도 강조합니다."},
+  D4:{org:"dgu",page:"58쪽 Q2",title:"과목 선택의 기준: 수강 이유의 타당성",
+      quote:"어떤 과목을 선택하더라도 수강 이유에 대한 타당성이 동반되어야 합니다",
+      body:"‘등급으로 산출되지 않기 때문에’, ‘어려운 과목을 들었다고 하면 좋은 평가를 받을 것 같아서’ 같은 이유보다, 진로에 필요한 과목이 무엇인지 고민해 이수 과목을 설계하고 충실히 이수하려는 태도가 바탕이 되어야 한다고 답합니다. 학교별 개설 상황이 다르므로 수강 여부만으로 일률적으로 평가하지 않는다는 점도 밝힙니다."},
+  D5:{org:"dgu",page:"59쪽 사례1",title:"우수 사례: 20명 듣는 물리학Ⅰ, 94점인데 3등급",
+      quote:"수강 인원에 따른 유불리에 얽매이지 않고",
+      body:"화공생물공학과 지원자는 수강자 20명인 물리학Ⅰ에서 원점수 94점(평균 66.4점)을 받고도 3등급이었습니다. 동국대는 성적 산출에 불리할 수 있는 과목을 전공 역량을 위해 과감히 선택한 태도를 진정성 있는 노력으로 높이 평가할 수 있다고 해설합니다. 3학년에 수강자 8명인 물리학Ⅱ, 62명인 화학Ⅱ 등 진로선택 과목을 전공 심화를 위해 이수한 점도 돋보인다고 짚습니다."},
+  D6:{org:"dgu",page:"60쪽 사례2",title:"아쉬운 사례: 어려워 보이는 과목만 고른 선택",
+      quote:"단순히 심화 과목 이수 자체에 초점을 둔 것으로 해석될 수 있어",
+      body:"의료인공지능공학과 지원자는 확률과 통계·기하·인공지능 수학을 들을 수 있었는데도 전문교과 심화수학Ⅰ을 택했고, 핵심 기초인 물리학을 전혀 이수하지 않았으며, 화학Ⅱ 대신 지구과학Ⅱ를 골랐습니다. 동국대는 이 학과에서 생명과학보다 수학·물리학 역량이 우선이라고 설명하며, 과목 선택의 개연성과 타당성 면에서 아쉬운 사례로 제시합니다."},
+  D7:{org:"dgu",page:"60쪽 면접준비",title:"면접위원은 과목 선택의 목적과 노력을 묻는다",
+      quote:"면접위원은 지원자가 과목을 선택한 목적과 그 과정에서의 노력에 주목합니다",
+      body:"학교 여건상 필요한 과목을 이수하지 못한 경우에도 창의적 체험활동, 공동교육과정, 독서 등으로 한계를 극복하려 한 경험은 서류와 면접에서 의미 있게 평가될 수 있다고 안내합니다. 예시 질문(요지): 기하나 인공지능 수학도 이수할 수 있었을 텐데 심화수학Ⅰ을 선택한 이유는 무엇인가?"},
+  D8:{org:"dgu",page:"44~45쪽",title:"합격자는 무엇을 들었나: 열린전공학부 이수 비율",
+      quote:"",
+      body:"2026학년도 열린전공학부(자연) 과목별 이수 비율(지원자 → 최종합격자): 물리학Ⅰ 66.3% → 96.0%, 물리학Ⅱ 49.2% → 80.0%, 기하 81.0% → 90.0%, 확률과 통계 82.1% → 92.0%. 반대로 생명과학Ⅱ 71.3% → 56.0%, 지구과학Ⅱ 20.8% → 16.0%. 동국대는 지원자는 화학·생명과학 이수 비율이 높지만 최종합격자에서는 화학·물리학 비율이 높아진다고 분석합니다. 열린전공학부(인문)는 특정 과목보다 학생 본인의 진로·관심사에 따라 사회 과목을 이수한 것으로 분석했습니다."},
+  D9:{org:"dgu",page:"39쪽 재학생 인터뷰",title:"선배의 후회: 과학을 하나도 안 들었더니",
+      quote:"선택과 집중이 필요한 것 같습니다",
+      body:"간호학과를 희망하면서도 재능과 흥미가 있다는 이유로 사회탐구만 수강한 재학생은, 그 결과 인문 계열로 모집하는 간호학과만 고려할 수 있어 선택의 폭이 줄었다고 말합니다. 다시 돌아간다면 성적이 조금 덜 나오더라도 생명과학 정도는 들었을 것이라며, 이수 자체로 이점이 되는 과목과 성적은 잘 나오지만 희망 학과에 이점이 크지 않은 과목 사이의 선택을 고민하라고 조언합니다."},
+  D10:{org:"dgu",page:"49쪽",title:"출결: 성실성을 보여주는 가장 기본적인 요소",
+      quote:"출결은 지원자의 성실성을 보여주는 가장 기본적인 요소이므로",
+      body:"동국대는 결석·지각·조퇴·결과가 있을 때 그 이유를 파악해 학교생활 충실도와 성실성을 확인한다고 설명합니다. 질병처럼 타당한 이유가 있는 경우는 크게 부정적으로 작용하지 않지만, 특별한 사유 없는 반복적 결석과 다수의 미인정은 부정적 요인이 될 수 있습니다. 잦은 결석·지각은 면접 질문으로 이어질 수 있습니다."},
+
+  K1:{org:"skku",page:"13쪽",title:"출결 데이터: 경영학과 학종 지원자 vs 합격자",
+      quote:"",
+      body:"전체 지원자는 개근 33.8%, 1회 이상 결석 66.2%, 미인정 결석 포함 11.6%, 평균 결석 5.5회였습니다. 합격자는 개근 비율이 훨씬 높고, 1회 이상 결석 57.3%, 미인정 결석은 극소수, 평균 결석 횟수는 대폭 감소했습니다. 결론: 질병 결석이 있어도 합격은 가능하지만(특히 사유가 명확하고 담임 기록이 있을 때) 개근이 확실히 유리하며, 습관적인 질병 조퇴는 성실성 평가에서 감점 요인입니다."},
+  K2:{org:"skku",page:"12쪽",title:"쉬운 과목 고등급 vs 어려운 과목 저등급",
+      quote:"",
+      body:"단순 비교는 불가능하다는 답변입니다. 쉬운 과목의 고등급은 수치상 유리하지만 역량 증명이 약하고, 어려운 과목의 저등급은 도전 정신은 인정되나 결과가 부담입니다. 가장 이상적인 것은 어려운 과목에서 높은 등급이며, 등급·원점수·이수자 수·세특을 종합해 판단합니다. 또한 진로선택과목은 A를 받았다고 안심할 수 없고 원점수와 세특까지 꼼꼼히 보며, 질병 결석도 개근보다 불리하므로 담임 종합의견에 사유를 명시하기를 권장합니다."},
+
+  M1:{org:"moe",page:"5쪽",title:"2022 개정 교육과정 내신: 5등급제",
+      quote:"",
+      body:"1등급 10%, 2등급 누적 34%, 3등급 누적 66%, 4등급 누적 90%, 5등급 100%. 과목 성적은 절대평가(A~E)와 상대평가(1~5등급)를 함께 기재하며, 체육·예술·교양 교과(군)와 과학탐구실험은 성취도만 기재합니다. 사회·과학 교과의 융합선택 9과목은 석차등급을 기재하지 않습니다. 즉 수강자 30명인 과목의 1등급은 3명 안팎입니다."},
+
+  R1:{org:"arori",page:"2025 공과대학 컴퓨터공학부",title:"합격자 기록 ① 컴퓨터공학부 지원자 A",
+      link:ARORI+"?md=view&year=2025&college=11&department=40",
+      body:"일반고, 평균재적인원 205명. 과학 이수: 통합과학, 과학탐구실험, 물리학Ⅰ, 화학Ⅰ, 생명과학Ⅰ, 물리학Ⅱ, 생명과학Ⅱ. 수학 8과목. 교과 평균: 국어 1.00, 수학 1.26, 과학 1.26. 이 사례의 지원자 3명은 모두 서울대 2025학년도 신입생이 되었습니다."},
+  R2:{org:"arori",page:"2025 공과대학 컴퓨터공학부",title:"합격자 기록 ② 컴퓨터공학부 지원자 B",
+      link:ARORI+"?md=view&year=2025&college=11&department=40&dataidx=800",
+      body:"일반고, 평균재적인원 110명. 과학 이수: 통합과학, 과학탐구실험, 물리학Ⅰ, 화학Ⅰ, 지구과학Ⅰ, 물리학Ⅱ, 지구과학Ⅱ, 융합과학 탐구. 수학 9과목. 교과 평균: 국어 1.00, 영어 1.40, 수학 1.16, 과학 1.12."},
+  R3:{org:"arori",page:"2026 경영대학",title:"합격자 기록 ③ 경영대학 지원자 A",
+      link:ARORI+"?md=view&year=2026&college=9",
+      body:"일반고, 평균재적인원 200명. 사회 이수 11과목: 통합사회, 세계지리, 경제, 정치와 법, 사회문제 탐구, 국제 경제, 한국지리, 사회·문화, 생활과 윤리, 여행지리, 한국사. 과학은 통합과학·과학탐구실험·생활과 과학(과학 평균 2.00). 수학 6과목(3학년 수학 2.00). 이 사례의 지원자 3명은 모두 서울대 2026학년도 신입생이 되었습니다."},
+  R4:{org:"arori",page:"2026 자연과학대학 통계학과",title:"합격자 기록 ④ 통계학과 지원자(기본 화면)",
+      link:ARORI+"?md=view&year=2026&college=5&department=27",
+      body:"일반고, 평균재적인원 192명. 과학 이수: 통합과학, 과학탐구실험, 물리학Ⅰ, 화학Ⅰ, 물리학Ⅱ, 화학Ⅱ, 과학과제 연구. 수학 6과목 평균 1.00. 그러나 2학년 과학 평균 2.00, 2학년 사회 평균 2.50."}
+};
+
+/* =========================================================
+   2. 딜레마 (2022 개정 교육과정 과목명 기준)
+   eff = 내신 효율(-2~+2), hak = 학종 관점(-2~+2)
+   ========================================================= */
+const PERSONAS = {
+ eng:{name:"공학 계열",sub:"화학공학·신소재·기계 공학을 희망",
+  dilemmas:[
+  {title:"2학년 과학 일반선택, 두 과목을 고르세요",
+   situation:"우리 학교 2학년 과학 일반선택 수요조사 결과가 나왔습니다. 공대에 가고 싶지만, 물리학은 신청자가 적어서 1등급 받기가 어렵다는 말이 돕니다. 친한 친구들은 대부분 생명과학과 지구과학을 고른다고 합니다.",
+   facts:[["물리학","32명","약 3명"],["화학","110명","약 11명"],["생명과학","150명","약 15명"],["지구과학","140명","약 14명"]],
+   factHead:["과목","신청 인원(예상)","1등급 자리(10%)"],
+   options:[
+    {label:"생명과학 + 지구과학",desc:"1등급 자리가 가장 많고, 친구들과 같이 공부할 수 있다.",eff:2,hak:-2,v:"risky",
+     calc:"1등급 자리가 15명, 14명으로 가장 넉넉합니다. 등급만 보면 가장 효율적인 선택입니다.",
+     adm:"공학에 필요한 물리·화학을 둘 다 피한 선택으로 읽힙니다. 동국대 열린전공학부(자연) 최종합격자의 96%가 물리학Ⅰ을 이수했고, 서울대 기계·재료공학 등은 물리학Ⅱ를 핵심·권장 과목으로 제시합니다. 물리 기초 없이 3학년 심화 과목으로 이어 가기도 어렵습니다.",
+     ev:["D8","S9","S5"],iq:"공학을 희망하면서 물리학과 화학을 모두 선택하지 않은 이유는 무엇인가요?"},
+    {label:"물리학 + 화학",desc:"신청자가 적어 등급은 불안하지만, 공학의 기초 과목이다.",eff:-1,hak:2,v:"good",
+     calc:"물리학은 1등급 자리가 3명 남짓이라 등급 하락 위험이 큽니다.",
+     adm:"서울대 가이드북이 직접 다룬 딜레마(물리학Ⅰ 30명 vs 생명과학Ⅰ 150명)입니다. 입학사정관은 소수 인원 과목의 등급이 잘 나오기 어렵다는 것을 알고, 그 맥락 속에서 성적을 읽습니다. 동국대는 20명이 듣는 물리학Ⅰ에서 94점을 받고도 3등급이었던 지원자를 높이 평가할 수 있는 사례로 소개합니다.",
+     ev:["S4","D5","S2"],iq:"물리학을 선택하며 가장 어려웠던 단원과, 그것을 극복하기 위해 한 공부를 말해 주세요."},
+    {label:"화학 + 생명과학",desc:"화학은 챙기고, 물리학 대신 인원 많은 생명과학으로 등급을 지킨다.",eff:1,hak:0,v:"mixed",
+     calc:"인원이 넉넉한 두 과목이라 등급 관리가 비교적 수월합니다.",
+     adm:"화학은 화공 계열의 핵심이라 의미가 있습니다. 다만 기계·신소재처럼 물리 역량이 중요한 학과라면 물리학을 피한 이유를 설명하기 어렵습니다. 희망 학과가 생명공학 쪽이라면 설명이 가능하므로, ‘왜 이 조합인가’를 스스로 말할 수 있어야 합니다.",
+     ev:["D4","S9","D8"],iq:"물리학 대신 생명과학을 선택한 이유를 희망 전공과 연결해 설명해 주세요."}
+   ]},
+  {title:"3학년 과학 진로·융합선택",
+   situation:"3학년 과학 선택과목입니다. 2022 개정 교육과정에서는 진로선택 과목도 석차등급이 나옵니다. 그런데 과학 융합선택 과목은 석차등급이 기재되지 않습니다. 선배는 “등급 안 나오는 과목으로 채우면 내신 걱정이 없다”고 조언합니다.",
+   facts:[["역학과 에너지","진로선택","12명","석차등급 있음"],["화학 반응의 세계","진로선택","40명","석차등급 있음"],["기후변화와 환경생태","융합선택","120명","석차등급 없음"],["융합과학 탐구","융합선택","90명","석차등급 없음"]],
+   factHead:["과목","구분","신청 인원","등급"],
+   options:[
+    {label:"기후변화와 환경생태 + 융합과학 탐구",desc:"둘 다 석차등급이 없으니 내신 부담이 ‘0’이다.",eff:2,hak:-1,v:"risky",
+     calc:"석차등급이 없는 과목만 들으면 등급 평균이 떨어질 일이 없습니다.",
+     adm:"동국대는 과목 선택 기준을 묻는 질문에 ‘등급으로 산출되지 않기 때문에’ 같은 생각보다 진로에 필요한 과목을 고민해 설계하라고 답합니다. 공학 지원자가 3학년에 물리·화학 심화 과목을 하나도 듣지 않으면 전공수학역량을 보여 줄 자료가 비게 됩니다.",
+     ev:["D4","D1","S5"],iq:"3학년에 물리·화학 계열 진로선택 과목을 이수하지 않은 이유는 무엇인가요?"},
+    {label:"역학과 에너지 + 화학 반응의 세계",desc:"12명뿐인 과목까지 포함. 등급은 각오해야 한다.",eff:-2,hak:2,v:"good",
+     calc:"12명 과목은 1등급이 1명뿐입니다. 등급만 보면 가장 위험한 선택입니다.",
+     adm:"동국대 우수 사례의 지원자도 3학년에 수강자 8명인 물리학Ⅱ와 화학Ⅱ를 골랐고, 동국대는 이를 전공 심화 역량을 기르려는 선택으로 돋보인다고 해설했습니다. 서울대는 진학 목표를 고려해 소수 선택 과목을 이수하는 노력이 긍정적으로 평가될 수 있다고 밝힙니다.",
+     ev:["D5","S6","S9"],iq:"수강 인원이 적은 역학과 에너지를 선택한 이유와, 수업에서 가장 깊이 탐구한 주제는 무엇인가요?"},
+    {label:"화학 반응의 세계 + 기후변화와 환경생태",desc:"환경공학에 관심이 있어 융합선택은 내용 때문에 고른다.",eff:1,hak:1,v:"good",
+     calc:"석차등급이 나오는 과목은 하나뿐이라 부담이 적당합니다.",
+     adm:"같은 융합선택이라도 ‘등급이 없어서’가 아니라 ‘환경공학에 필요한 내용이라서’ 골랐고, 그 이유를 세특과 탐구로 보여 줄 수 있다면 타당한 선택입니다. 동국대가 말하는 기준은 과목의 난이도가 아니라 수강 이유의 타당성입니다.",
+     ev:["D4","D2"],iq:"기후변화와 환경생태 수업에서 배운 내용이 희망 전공과 어떻게 연결되나요?"}
+   ]},
+  {title:"3학년 수학, 무엇을 들을까?",
+   situation:"기하는 이과 상위권이 몰려 등급 받기가 어렵다고 합니다. 한 친구는 “고급 미적분 같은 전문교과를 들으면 훨씬 어려워 보여서 인상이 좋을걸?”이라고 하고, 다른 친구는 “수학과제 탐구가 등급 잘 나온대”라고 합니다.",
+   facts:[["기하","진로선택","70명","이과 상위권 다수"],["수학과제 탐구","융합선택","35명","수행평가 중심"],["고급 미적분","전문교과","15명","이름부터 어려워 보임"]],
+   factHead:["과목","구분","신청 인원","특징"],
+   options:[
+    {label:"기하",desc:"등급은 어렵지만 공학 수학의 기본이다.",eff:-1,hak:2,v:"good",
+     calc:"경쟁자가 강해 등급이 떨어질 수 있습니다.",
+     adm:"서울대는 기계·재료·건설환경 공학 등에서 기하를 핵심 권장 과목으로 제시합니다. 동국대 열린전공학부(자연) 최종합격자의 기하 이수 비율은 지원자보다 높았습니다(81.0% → 90.0%). 성균관대 설명회에서도 가장 이상적인 것은 ‘어려운 과목에서 높은 등급’이라고 했습니다. 피하지 말고, 잘하는 것이 목표입니다.",
+     ev:["S9","D8","K2"],iq:"기하에서 배운 벡터 개념을 공학 문제에 적용해 본 경험이 있나요?"},
+    {label:"수학과제 탐구",desc:"등급이 잘 나온다는 소문이 있다.",eff:1,hak:-1,v:"mixed",
+     calc:"등급 관리에는 유리할 수 있습니다.",
+     adm:"과제 탐구 과목 자체가 나쁜 것은 아닙니다. 하지만 ‘등급이 잘 나와서’가 이유라면 서울대가 말한 ‘유리한 과목만 이수해 수치만 좋게 받으려 한 경우’에 가까워집니다. 탐구하고 싶은 주제가 분명하다면 기하와 함께 듣는 것을 고민해 보세요.",
+     ev:["S5","D4"],iq:"수학과제 탐구에서 직접 정한 탐구 주제와 그 이유는 무엇인가요?"},
+    {label:"기하 대신 고급 미적분(전문교과)",vt:"보여 주기만 노린 선택",desc:"더 어려워 보이니 좋은 평가를 받을 것 같다.",eff:-1,hak:-1,v:"risky",
+     calc:"수강자가 적고 난도가 높아 등급 위험이 큽니다.",
+     adm:"동국대 가이드북의 ‘아쉬운 사례’와 같은 구조입니다. 그 지원자는 기하·인공지능 수학을 들을 수 있었는데도 전문교과 심화수학Ⅰ을 택했고, 동국대는 이를 기초를 쌓기보다 심화 과목 이수 자체에 초점을 둔 선택으로 해석될 수 있다고 했습니다. 동국대는 ‘어려운 과목을 들었다고 하면 좋은 평가를 받을 것 같아서’라는 생각도 경계합니다.",
+     ev:["D6","D4","D7"],iq:"기하도 이수할 수 있었을 것 같은데, 고급 미적분을 선택한 이유가 무엇인지 구체적으로 말씀해 주시겠습니까?"}
+   ]}
+ ]},
+
+ ai:{name:"인공지능·데이터 계열",sub:"컴퓨터공학·데이터과학·의료인공지능을 희망",
+  dilemmas:[
+  {title:"2학년 2학기, 확률과 통계를 들을까?",
+   situation:"2학년 2학기 수학 선택입니다. 확률과 통계는 인문계열 친구들도 많이 들어 경쟁이 치열하지 않다고 하지만, 같은 시간대에 ‘공부량이 적고 등급이 잘 나온다’는 사회와 문화가 있습니다. 경제 수학도 같은 시간대입니다.",
+   facts:[["확률과 통계","일반선택","180명"],["사회와 문화","일반선택","190명"],["경제 수학","진로선택","45명"]],
+   factHead:["과목","구분","신청 인원"],
+   options:[
+    {label:"확률과 통계",desc:"데이터·AI의 기초가 되는 과목이다.",eff:0,hak:2,v:"good",
+     calc:"인원이 많아 등급 관리에 특별히 불리하지 않습니다.",
+     adm:"서울대는 컴퓨터공학부 핵심 권장 과목으로 미적분과 확률과 통계를 제시합니다. 동국대의 ‘아쉬운 사례’(의료인공지능공학과)에서 가장 먼저 지적된 것이 2학년에 확률과 통계를 들을 수 있었는데도 이수하지 않은 점이었습니다.",
+     ev:["S9","D6","D8"],iq:"확률과 통계에서 배운 내용 중 인공지능의 원리와 연결되는 개념을 하나 설명해 주세요."},
+    {label:"사회와 문화",desc:"공부량이 적고 등급이 잘 나온다는 소문이 있다.",eff:1,hak:-2,v:"risky",
+     calc:"등급만 보면 안전한 선택일 수 있습니다.",
+     adm:"AI·데이터 지원자에게 확률과 통계를 빼고 ‘등급이 잘 나오는 과목’을 넣은 선택은 수강 이유의 타당성을 설명하기 어렵습니다. 서울대는 유리한 과목만 이수해 수치만 좋게 받으려 한 경우 긍정적인 평가를 받지 못하기도 한다고 밝힙니다.",
+     ev:["S5","D6","D4"],iq:"인공지능 분야를 희망하면서 확률과 통계를 이수하지 않은 이유는 무엇인가요?"},
+    {label:"경제 수학",desc:"이름에 ‘수학’이 들어가니 비슷하지 않을까?",eff:0,hak:-1,v:"mixed",
+     calc:"인원이 적당해 등급 위험은 중간입니다.",
+     adm:"경제 수학이 나쁜 과목은 아니지만, AI 지원자가 기초 과목인 확률과 통계 대신 고른 이유가 분명하지 않으면 과목 설계가 어색해 보입니다. 동국대는 기초 과목도 소홀히 하지 말라고 하고, 어떤 과목이든 수강 이유의 타당성을 요구합니다.",
+     ev:["D4","D2"],iq:"확률과 통계 대신 경제 수학을 선택한 이유는 무엇인가요?"}
+   ]},
+  {title:"‘의료’ 인공지능이니까 생명과학?",
+   situation:"의료인공지능공학과를 희망합니다. ‘의료’라는 말이 들어가니 생명과학이 중요할 것 같고, 물리학은 신청자가 적어 등급이 걱정됩니다.",
+   facts:[["물리학","30명","약 3명"],["화학","110명","약 11명"],["생명과학","150명","약 15명"],["지구과학","140명","약 14명"]],
+   factHead:["과목","신청 인원(예상)","1등급 자리(10%)"],
+   options:[
+    {label:"생명과학 + 지구과학",desc:"의료니까 생명, 지구과학은 등급 받기 좋다.",eff:2,hak:-2,v:"risky",
+     calc:"1등급 자리가 가장 많아 등급 면에서는 최선입니다.",
+     adm:"동국대 가이드북의 의료인공지능공학과 ‘아쉬운 사례’가 바로 이 방향이었습니다. 동국대는 학과명에 ‘의료’가 들어 있어도 공학적 기초 역량이 중요해 생명과학보다 수학·물리학 역량이 우선된다고 설명하고, 물리학을 전혀 이수하지 않은 점과 화학Ⅱ 대신 지구과학Ⅱ를 고른 점을 아쉬움으로 꼽았습니다.",
+     ev:["D6","D4"],iq:"의료인공지능공학의 기초가 되는 물리학을 이수하지 않은 이유는 무엇인가요?"},
+    {label:"물리학 + 생명과학",desc:"공학 기초(물리)와 관심 분야(생명)를 함께 챙긴다.",eff:0,hak:2,v:"good",
+     calc:"물리학의 등급 위험은 생명과학의 넉넉한 인원으로 일부 상쇄됩니다.",
+     adm:"학과에 필요한 기초(물리)와 응용 분야에 대한 관심(생명)을 함께 보여 주는 설계입니다. 서울대는 소수 인원 과목의 등급이 잘 나오기 어렵다는 점을 알고 평가한다고 밝힙니다.",
+     ev:["D6","S4","D5"],iq:"물리학과 생명과학에서 배운 내용을 함께 활용해 의료 데이터를 다룬다면 어떤 주제를 탐구하고 싶나요?"},
+    {label:"물리학 + 화학",desc:"생명과학은 독서와 탐구로 보완하고 이공 기초에 집중한다.",eff:-1,hak:1,v:"good",
+     calc:"인원이 적은 물리학이 포함되어 등급 위험이 있습니다.",
+     adm:"동국대 열린전공학부(자연) 최종합격자 집단에서 물리·화학 이수 비율이 높게 나타난 것처럼, 이공 계열 기초를 다진 선택입니다. 다만 의료 분야 관심을 보여 줄 다른 근거(세특·독서·탐구)를 함께 준비하면 더 설득력이 생깁니다.",
+     ev:["D8","D7"],iq:"의료 분야에 대한 관심을 수업 안에서 어떻게 키워 왔나요?"}
+   ]},
+  {title:"3학년 수학: 기하·인공지능 수학 vs 전문교과",
+   situation:"3학년 1학기 수학입니다. 기하와 인공지능 수학을 둘 다 들을 수 있습니다. 그런데 ‘고급 미적분’ 같은 전문교과를 들으면 더 대단해 보인다는 말을 들었습니다. 또 다른 친구는 수학을 줄이고 석차등급이 없는 여행지리(사회 융합선택)를 넣으라고 합니다.",
+   facts:[["기하","진로선택","70명"],["인공지능 수학","진로선택","25명"],["고급 미적분","전문교과","15명"],["여행지리","사회 융합선택(석차등급 없음)","130명"]],
+   factHead:["과목","구분","신청 인원"],
+   options:[
+    {label:"기하 + 인공지능 수학",desc:"진로와 바로 이어지는 두 과목을 듣는다.",eff:-1,hak:2,v:"good",
+     calc:"두 과목 모두 경쟁이 있어 등급이 흔들릴 수 있습니다.",
+     adm:"동국대는 바로 이 두 과목(기하, 인공지능 수학)을 ‘전공과 연계된 기초·확장 과목’이라고 표현했습니다. 이수 과목을 진로에 맞게 설계하고 충실히 이수하려는 태도가 평가의 바탕입니다.",
+     ev:["D6","D4","S9"],iq:"인공지능 수학에서 배운 내용 중 가장 흥미로웠던 개념과, 그것을 더 깊이 공부한 방법을 말해 주세요."},
+    {label:"고급 미적분(전문교과)만",vt:"보여 주기만 노린 선택",desc:"더 어려운 과목이 더 좋은 평가를 받을 것이다.",eff:-1,hak:-1,v:"risky",
+     calc:"수강자가 적고 난도가 높아 등급 위험이 큽니다.",
+     adm:"동국대 ‘아쉬운 사례’의 지원자는 기하·인공지능 수학 대신 전문교과 심화수학Ⅰ을 골랐고, 면접 예시 문항으로 ‘기하나 인공지능 수학 대신 심화수학Ⅰ을 선택한 이유’를 묻는 질문이 제시되었습니다. 동국대는 선행 과목을 이수하지 않고 전문교과를 듣는 경우 충실히 학습했는지 의문이 남을 수 있다고도 지적합니다(58쪽).",
+     ev:["D6","D7","D4"],iq:"기하나 인공지능 수학도 이수할 수 있었을 것 같은데, 고급 미적분을 선택한 이유가 무엇인지 구체적으로 말씀해 주시겠습니까?"},
+    {label:"수학 대신 여행지리",desc:"석차등급이 없는 과목으로 내신을 지킨다.",eff:2,hak:-2,v:"risky",
+     calc:"석차등급이 없는 과목이라 등급 평균에 영향이 없습니다.",
+     adm:"AI 지원자가 3학년 수학을 줄이고 등급이 안 나오는 과목을 넣는 것은, 동국대가 경계한 ‘등급으로 산출되지 않기 때문에’라는 선택 이유와 같습니다. 서울대도 유리한 과목만 골라 수치만 좋게 받으려 한 경우를 긍정적으로 보지 않는다고 밝힙니다.",
+     ev:["D4","S5"],iq:"3학년에 수학 과목을 줄인 이유는 무엇인가요?"}
+   ]}
+ ]},
+
+ biz:{name:"경영·경제 계열",sub:"경영학·경제학·회계·금융을 희망",
+  dilemmas:[
+  {title:"2학년 사회 과목, 경제를 들을까?",
+   situation:"경제는 어렵다는 소문 때문에 신청자가 28명뿐입니다. 사회와 문화는 180명이 신청했습니다. 여행지리와 윤리문제 탐구는 사회 융합선택이라 석차등급이 기재되지 않습니다.",
+   facts:[["경제","진로선택","28명","약 2명"],["사회와 문화","일반선택","180명","약 18명"],["여행지리","융합선택","130명","석차등급 없음"],["윤리문제 탐구","융합선택","100명","석차등급 없음"]],
+   factHead:["과목","구분","신청 인원","1등급 자리"],
+   options:[
+    {label:"여행지리 + 윤리문제 탐구",desc:"둘 다 석차등급이 없으니 내신이 떨어질 일이 없다.",eff:2,hak:-1,v:"risky",
+     calc:"등급 평균에 전혀 영향을 주지 않는 가장 ‘안전한’ 조합입니다.",
+     adm:"관심이 있다면 좋은 과목들입니다. 하지만 경영·경제 지원자가 경제를 피하고 ‘등급이 없어서’ 두 과목을 골랐다면, 동국대가 말한 수강 이유의 타당성을 갖추기 어렵습니다.",
+     ev:["D4","S5"],iq:"경영학을 희망하면서 경제 과목을 이수하지 않은 이유는 무엇인가요?"},
+    {label:"경제 + 사회와 문화",desc:"경제는 등급이 불안하지만 전공의 기초다.",eff:-1,hak:2,v:"good",
+     calc:"경제는 1등급이 2명 남짓이라 등급 위험이 큽니다.",
+     adm:"서울대 아로리에 공개된 2026학년도 경영대학 합격자(지원자 A)는 경제, 국제 경제, 정치와 법, 사회문제 탐구 등 사회 과목을 11개나 이수했습니다. 서울대는 소수 인원 과목을 수강하는 것이 서류평가에서 결코 불리하지 않다고 밝힙니다.",
+     ev:["R3","S2","S4"],iq:"경제 수업에서 배운 개념으로 실제 기업이나 시장의 사례를 분석해 본 경험이 있나요?"},
+    {label:"사회와 문화 + 세계시민과 지리",desc:"인원 많은 일반선택으로 무난하게 간다.",eff:1,hak:0,v:"mixed",
+     calc:"인원이 많아 등급 관리가 쉬운 편입니다.",
+     adm:"무난하지만 전공과의 연결이 약합니다. 동국대 열린전공학부(인문) 분석처럼 사회 과목은 관심사에 따라 고르면 되지만, 그 관심이 경영·경제와 어떻게 이어지는지 설명할 수 있어야 합니다. 경제를 들을 수 있는 학교라면 피한 이유를 질문받을 수 있습니다.",
+     ev:["D8","D4"],iq:"사회와 문화에서 탐구한 주제가 경영학과 어떻게 연결되나요?"}
+   ]},
+  {title:"문과인데 미적분Ⅰ까지 들어야 할까?",
+   situation:"인문계열 친구들은 대부분 미적분Ⅰ을 피하고 확률과 통계만 듣습니다. 미적분Ⅰ은 이과 상위권이 많이 들어 등급 받기가 어렵다고 합니다. 경제학이나 경영학에서 수학을 많이 쓴다는 이야기는 들었습니다.",
+   facts:[["대수","일반선택","전원"],["미적분Ⅰ","일반선택","이과 다수 + 인문 소수"],["확률과 통계","일반선택","인문 다수"],["경제 수학","진로선택","45명"]],
+   factHead:["과목","구분","수강 분위기"],
+   options:[
+    {label:"확률과 통계만",desc:"인문 친구들과 함께, 등급을 지킨다.",eff:1,hak:-1,v:"mixed",
+     calc:"경쟁이 덜한 과목에 집중해 등급 관리에 유리합니다.",
+     adm:"확률과 통계는 경영·경제에 꼭 필요한 과목이라 의미가 있습니다. 다만 서울대는 경제학부 권장 과목으로 미적분과 확률과 통계를 함께 제시합니다. 경제학을 희망한다면 미적분을 피한 이유를 설명해야 할 수 있습니다.",
+     ev:["S9","S13"],iq:"경제학의 기초가 되는 미적분을 이수하지 않은 이유는 무엇인가요?"},
+    {label:"미적분Ⅰ + 확률과 통계",desc:"등급은 각오하고 수학 기초를 넓힌다.",eff:-1,hak:2,v:"good",
+     calc:"이과 상위권과 경쟁해야 해 미적분Ⅰ 등급이 떨어질 수 있습니다.",
+     adm:"서울대 경제학부 권장 과목(미적분·확률과 통계)과 맞는 설계입니다. 아로리에 공개된 경영대학 합격자도 수학을 6과목 이수했고, 3학년 수학 평균은 2.00이었습니다. 등급 하나보다 3년간 무엇을 배웠는지가 함께 읽힌다는 것을 보여 줍니다.",
+     ev:["S9","R3","S1"],iq:"미적분Ⅰ에서 배운 개념을 경제 현상과 연결해 본 경험이 있나요?"},
+    {label:"미적분Ⅰ 대신 경제 수학",desc:"이름에 ‘경제’가 있으니 전공에 더 맞아 보인다.",eff:0,hak:0,v:"mixed",
+     calc:"인원이 적당해 등급 위험은 중간입니다.",
+     adm:"경제 수학은 경영·경제와 관련이 깊은 과목이라 선택 이유를 설명하기 쉽습니다. 다만 경제학처럼 미적분을 권장하는 모집단위라면 기초 과목을 건너뛰었다는 질문을 받을 수 있습니다. 희망 대학의 권장 과목을 먼저 확인하세요.",
+     ev:["D4","S8"],iq:"경제 수학을 선택한 이유와, 그 과목에서 배운 내용을 전공 공부에 어떻게 활용할 수 있을지 말해 주세요."}
+   ]},
+  {title:"우리 학교에 없는 과목, 공동교육과정으로 들을까?",
+   situation:"관심 있는 ‘국제 경제’가 우리 학교에는 개설되지 않습니다. 교육청 온라인 공동교육과정으로 들을 수 있지만, 평일 저녁 수업이라 내신 공부 시간이 줄어듭니다.",
+   facts:[["국제 경제","공동교육과정(온라인)","평일 저녁, 한 학기"]],
+   factHead:["과목","운영 방식","시간"],
+   options:[
+    {label:"신청해서 끝까지 충실히 듣는다",desc:"시간 부담은 있지만 진짜 배우고 싶은 과목이다.",eff:-1,hak:2,v:"good",
+     calc:"내신 과목 공부 시간이 줄어드는 부담이 있습니다.",
+     adm:"동국대는 학교 여건상 필요한 과목을 이수하지 못할 때 공동교육과정 등으로 한계를 극복하려 한 경험이 의미 있게 평가될 수 있다고 안내합니다. 아로리 경영대학 합격자의 이수 과목에도 국제 경제가 있었습니다.",
+     ev:["D7","R3"],iq:"공동교육과정으로 국제 경제를 수강하게 된 계기와, 수업에서 배운 가장 인상 깊은 내용을 말해 주세요."},
+    {label:"신청하지 않고 학교 수업에 집중한다",desc:"지금 듣는 과목을 더 깊이 공부하는 것도 방법이다.",eff:1,hak:0,v:"mixed",
+     calc:"내신 과목에 시간을 더 쓸 수 있습니다.",
+     adm:"이 선택이 틀린 것은 아닙니다. 서울대와 동국대 모두 학교마다 개설 여건이 다르다는 점을 감안해 수강 여부만으로 일률적으로 평가하지 않는다고 밝힙니다. 대신 지금 듣는 수업 안에서 관심 주제를 깊이 탐구한 흔적이 중요해집니다.",
+     ev:["S8","D4"],iq:"학교에 개설되지 않은 분야에 대한 관심을 어떤 방법으로 채워 왔나요?"},
+    {label:"생기부에 좋아 보이니 일단 신청만",vt:"보여 주기만 노린 선택",desc:"이수만 하면 기록이 남으니 대충 들어도 되겠지.",eff:-1,hak:-2,v:"risky",
+     calc:"시간은 쓰는데 성적도 기록도 애매해질 수 있습니다.",
+     adm:"동국대는 이수 과목을 설계해 ‘충실히 이수하고자 하는 태도’가 바탕이 되어야 한다고 말합니다. 면접위원은 과목을 선택한 목적과 그 과정에서의 노력에 주목하므로, 이름만 있는 이수는 오히려 질문의 표적이 됩니다.",
+     ev:["D4","D7"],iq:"국제 경제 수업에서 배운 내용을 구체적으로 설명해 주세요."}
+   ]}
+ ]},
+
+ undec:{name:"아직 진로 미정",sub:"자유전공·열린전공 등 넓게 고민 중",
+  dilemmas:[
+  {title:"사회 과목이 재밌고 등급도 잘 나와요. 과학은 안 들어도 될까?",
+   situation:"진로는 아직 못 정했습니다. 사회 과목은 재미있고 성적도 잘 나옵니다. 과학은 자신이 없어서 2학년 선택에서 아예 빼고 싶습니다.",
+   facts:[["사회 4과목","흥미·성적 모두 좋음"],["사회 3과목 + 과학 1과목","과학 등급이 걱정"],["인원 많은 과목 위주","무난함"]],
+   factHead:["안","특징"],
+   options:[
+    {label:"사회 과목만 4과목",desc:"잘하는 것에 집중한다.",eff:2,hak:-1,v:"mixed",
+     calc:"자신 있는 과목에 집중해 등급 평균을 높일 수 있습니다.",
+     adm:"흥미를 따른 선택 자체는 존중받습니다. 그러나 동국대 재학생 인터뷰에서 한 선배는 사회탐구만 들은 탓에 인문 계열로 모집하는 간호학과만 고려할 수 있었다며, 다시 돌아가면 생명과학 정도는 들었을 것이라고 말합니다. 진로 미정일수록 선택지를 스스로 닫지 않는 것이 중요합니다.",
+     ev:["D9","S13"],iq:"과학 과목을 이수하지 않은 이유는 무엇인가요?"},
+    {label:"사회 중심 + 과학 1과목",desc:"흥미는 살리고, 진로의 문은 열어 둔다.",eff:0,hak:2,v:"good",
+     calc:"과학 한 과목이 등급 평균을 조금 낮출 수 있습니다.",
+     adm:"서울대는 지원 시점 이전까지 고른 교과목을 이수해 고른 학업소양을 갖추기를 권장합니다. 관심 영역은 깊게, 기초 영역은 열어 두는 설계로 설명하기 좋습니다.",
+     ev:["S13","D9","S12"],iq:"관심 분야가 사회 쪽인데 과학 과목도 선택한 이유는 무엇인가요?"},
+    {label:"친구들이 많이 듣는 과목 위주",desc:"인원이 많아야 등급이 잘 나오니까.",eff:1,hak:-1,v:"risky",
+     calc:"인원이 많은 과목은 1등급 자리가 많습니다.",
+     adm:"‘남들이 많이 들어서’는 동국대가 요구하는 수강 이유의 타당성(학습 목적, 진로와의 연관성, 지적 호기심)에 해당하지 않습니다. 서울대 선배도 점수가 잘 나오는 과목을 고르는 경향을 짚으며, 진로 탐색 과정에서 끌리는 과목을 고려하라고 조언합니다.",
+     ev:["D4","S10","S5"],iq:"이 과목들을 선택한 이유를 본인의 관심사와 연결해 설명해 주세요."}
+   ]},
+  {title:"수학, 미적분Ⅰ까지 갈까 멈출까?",
+   situation:"인문과 자연 중 어디로 갈지 아직 모르겠습니다. 미적분Ⅰ은 어렵고 등급 경쟁도 셉니다. 확률과 통계만 들으면 등급은 지킬 수 있을 것 같습니다.",
+   facts:[["미적분Ⅰ","경쟁 치열, 대부분의 자연·공학 학과 권장"],["확률과 통계","인문·자연 모두 활용"],["수학 최소 이수","등급 부담 최소"]],
+   factHead:["과목","특징"],
+   options:[
+    {label:"미적분Ⅰ + 확률과 통계",desc:"어렵지만 나중에 어느 쪽으로 가도 쓸 수 있다.",eff:-1,hak:2,v:"good",
+     calc:"미적분Ⅰ에서 등급이 떨어질 위험이 있습니다.",
+     adm:"서울대 전공 연계 교과이수 과목 표를 보면 자연·공학 계열 대부분이 미적분을 핵심 또는 권장 과목으로, 경제학부도 미적분을 권장 과목으로 제시합니다. 서울대는 ‘위계에 따른 과목 선택 노력’을 학업태도의 평가 자료로 봅니다. 진로가 정해지지 않았다면 이후 선택지를 열어 두는 설계입니다.",
+     ev:["S9","S3","D8"],iq:"진로를 정하지 않은 상태에서 미적분Ⅰ까지 이수한 이유는 무엇인가요?"},
+    {label:"확률과 통계만",desc:"인문으로 갈 가능성이 높다면 이 정도면 충분하다.",eff:1,hak:0,v:"mixed",
+     calc:"등급 관리에 유리합니다.",
+     adm:"인문 계열로 진로를 좁혀 가고 있다면 타당한 선택일 수 있습니다. 동국대 열린전공학부(인문) 분석도 특정 과목보다 본인의 관심사에 따른 이수를 확인했다고 밝힙니다. 다만 자연·공학 계열로 바뀔 가능성이 있다면 이후 선택지가 줄어듭니다.",
+     ev:["D8","S8"],iq:"수학 과목을 확률과 통계까지만 이수한 이유는 무엇인가요?"},
+    {label:"수학은 최소한만",desc:"수학은 등급만 깎으니 줄인다.",eff:2,hak:-2,v:"risky",
+     calc:"등급 평균에는 가장 유리합니다.",
+     adm:"서울대는 좋은 성적을 받는 데 유리한 과목만 이수해 수치만 좋게 받으려 한 경우 긍정적인 평가를 받지 못하기도 한다고 밝힙니다. 진로 미정인 학생이 기초 교과를 줄이면 이후 어떤 계열을 택하든 설명이 어려워집니다.",
+     ev:["S5","S13"],iq:"수학 과목을 최소한으로 이수한 이유는 무엇인가요?"}
+   ]},
+  {title:"3학년이 되어 진로가 바뀌었어요",
+   situation:"2학년까지는 사회과학 계열을 생각했는데, 3학년이 되며 환경공학에 관심이 생겼습니다. 지금 과학 과목을 넣으면 등급이 흔들릴 것 같습니다.",
+   facts:[["새 진로 관련 과목 이수","등급 위험, 이유 설명 가능"],["기존 계획 유지","무난하지만 새 관심이 드러나지 않음"],["등급 잘 나오는 과목으로","내신 방어"]],
+   factHead:["안","특징"],
+   options:[
+    {label:"관련 과목을 지금이라도 듣고, 바뀐 이유를 기록으로 남긴다",desc:"늦었지만 진짜 관심을 따라간다.",eff:-1,hak:2,v:"good",
+     calc:"익숙하지 않은 과목이라 등급 위험이 있습니다.",
+     adm:"서울대는 고교 재학 중 진로가 바뀔 수 있음을 알고, 권장 과목을 이수하지 못했더라도 다양한 선택과목에 나타난 적극성과 충실성을 평가에 반영한다고 밝힙니다. 진로가 바뀐 계기와 그 뒤의 노력은 면접에서 좋은 이야기가 됩니다.",
+     ev:["S8","D7"],iq:"진로를 바꾸게 된 계기와, 바뀐 진로를 위해 3학년에 어떤 노력을 했는지 말해 주세요."},
+    {label:"기존 계획대로 간다",desc:"지금 바꾸면 기록이 흐트러질 것 같다.",eff:1,hak:0,v:"mixed",
+     calc:"익숙한 과목이라 등급 관리가 쉽습니다.",
+     adm:"안정적이지만 새 관심이 기록에 드러나지 않습니다. 과목을 바꾸기 어렵다면 지금 듣는 과목 안에서 새 관심과 연결된 탐구를 해 보는 방법도 있습니다.",
+     ev:["D7","D4"],iq:"지원 학과에 관심을 갖게 된 시점과 그 뒤에 한 노력을 말해 주세요."},
+    {label:"남은 학기는 등급 잘 나오는 과목으로",desc:"3학년은 내신 방어가 우선이다.",eff:2,hak:-2,v:"risky",
+     calc:"등급 평균을 지키는 데는 가장 유리합니다.",
+     adm:"서울대는 고학년이 될수록 과목 선택에 따라 수강자 구성이 달라진다는 점을 고려하며, 유리한 과목만 이수해 수치만 좋게 받으려 한 경우를 긍정적으로 보지 않는다고 밝힙니다.",
+     ev:["S5","S11"],iq:"3학년 과목을 선택한 기준은 무엇이었나요?"}
+   ]}
+ ]}
+};
+
+const COMMON = [
+ {title:"등급이 없는 과목, 대충 해도 될까?",
+  situation:"체육·예술·교양 과목과 과학탐구실험은 성취도(A·B·C)만 기재되고, 사회·과학 융합선택은 석차등급이 없습니다. 친구들은 “어차피 등급 안 나오니까 시험 기간엔 그 시간에 주요 과목 공부하자”고 합니다.",
+  facts:[["체육·예술·교양, 과학탐구실험","성취도만 기재"],["사회·과학 융합선택 9과목","A~E 성취도만, 석차등급 없음"],["그 밖의 과목","A~E + 1~5등급 함께 기재"]],
+  factHead:["과목","성적 기재 방식"],
+  options:[
+   {label:"최소한만 하고 주요 과목에 집중",desc:"등급이 없는 과목은 대학도 안 볼 것이다.",eff:1,hak:-2,v:"risky",
+    calc:"주요 과목 공부 시간을 늘릴 수 있습니다.",
+    adm:"동국대는 비주요교과를 통해서도 학습의 주도성을 평가할 수 있으니 선택한 모든 과목에 책임감을 가지라고 말합니다. 서울대도 모든 교과의 성취를 반영합니다. 성균관대 설명회에서는 진로선택에서 A를 받았다고 안심하면 안 되며 원점수와 세특까지 꼼꼼히 본다고 했습니다.",
+    ev:["D2","S7","K2"],iq:"등급이 산출되지 않는 과목에서는 어떤 자세로 수업에 참여했나요?"},
+   {label:"성취도와 상관없이 수업에 성실히 참여",desc:"등급이 없어도 배우는 내용과 태도는 기록된다.",eff:0,hak:2,v:"good",
+    calc:"주요 과목 공부 시간이 조금 줄어듭니다.",
+    adm:"서울대는 학교생활기록부의 모든 기재 내용을 평가 대상으로 삼고, 학업태도를 수업 참여도와 과목 선택 내역 등으로 종합해 봅니다. 등급이 없는 과목의 세특과 성취도에서도 학생의 성실성이 드러납니다.",
+    ev:["S3","S7","D2"],iq:"등급과 상관없이 가장 열심히 참여한 수업과 그 이유를 말해 주세요."},
+   {label:"관심 있는 과목만 열심히",desc:"좋아하는 미술은 열심히, 나머지는 적당히.",eff:1,hak:0,v:"mixed",
+    calc:"시간 배분 면에서는 효율적입니다.",
+    adm:"관심 과목에서의 몰입은 좋은 기록이 됩니다. 다만 동국대는 ‘자신이 선택한 모든 과목’에 대한 책임감을 강조합니다. 적당히 한 과목의 낮은 성취도나 빈약한 기록도 함께 읽힌다는 점을 기억하세요.",
+    ev:["D2","S7"],iq:"관심이 적었던 과목에서는 어떻게 학습을 이어 갔나요?"}
+  ]},
+ {title:"기말고사 사흘 전, 조퇴하고 집에서 공부할까?",
+  situation:"2학년 기말고사가 사흘 남았습니다. 컨디션이 조금 안 좋습니다. 친구는 “병원 들렀다가 질병 조퇴하면 생기부에 문제없대. 집에서 공부하는 게 훨씬 효율적이야”라고 합니다. 이번 학기에 비슷한 이유로 이미 두 번 조퇴했습니다.",
+  facts:[["질병 조퇴","증빙 있으면 ‘질병’으로 기록"],["미인정 지각·조퇴","사유 없이 기록"],["끝까지 수업","공부 시간 감소"]],
+  factHead:["선택","기록"],
+  options:[
+   {label:"질병 조퇴하고 집에서 시험공부",desc:"질병 처리하면 괜찮다고 하니까.",eff:1,hak:-2,v:"risky",
+    calc:"시험 직전 공부 시간을 몇 시간 더 확보할 수 있습니다.",
+    adm:"성균관대 설명회 자료에서는 습관적인 질병 조퇴가 성실성 평가에서 감점 요인이며, 질병 결석도 개근보다 불리하다고 했습니다. 경영학과 학종 합격자 집단은 전체 지원자보다 개근 비율이 훨씬 높고 평균 결석 횟수가 크게 적었습니다. 동국대도 질병·기타 사유의 결석과 지각이 계속 반복되면 면접 질문으로 이어질 수 있다고 안내합니다.",
+    ev:["K1","K2","D10"],iq:"2학년 때 질병 조퇴가 여러 번 있었는데, 구체적인 이유를 설명해 주세요."},
+   {label:"수업을 끝까지 듣고 저녁에 공부",desc:"컨디션 조절을 하며 일상을 지킨다.",eff:0,hak:2,v:"good",
+    calc:"공부 시간은 조금 줄지만 수업 내용이 곧 시험 범위입니다.",
+    adm:"동국대는 출결을 성실성을 보여 주는 가장 기본적인 요소라고 설명합니다. 다만 정말 아플 때는 무리하지 말고 쉬어야 합니다. 질병처럼 타당한 이유가 있는 결석은 크게 부정적으로 작용하지 않으며, 성균관대 설명회에서는 사유를 담임 선생님 종합의견에 명시하도록 권장했습니다.",
+    ev:["D10","K1","K2"],iq:"3년 동안 학교생활의 성실성을 지키기 위해 스스로 세운 원칙이 있나요?"},
+   {label:"지각 몇 번쯤은 괜찮다",desc:"아침에 늦게까지 자고 공부하면 효율이 더 좋다.",eff:0,hak:-2,v:"risky",
+    calc:"수면 시간을 조금 더 확보할 수 있습니다.",
+    adm:"동국대는 특별한 사유 없는 반복적 결석과 다수의 미인정이 학교생활 충실도와 성실성 면에서 부정적 요인이 될 수 있다고 밝힙니다. 성균관대 경영학과 학종 합격자 중 미인정 결석이 있는 학생은 극소수였습니다.",
+    ev:["D10","K1"],iq:"미인정 지각이 잦은 이유를 설명해 주시고, 대학 진학 후 학업에 어려움이 없을지 말씀해 주세요."}
+  ]}
+];
+
+/* =========================================================
+   3. 화면 렌더링
+   ========================================================= */
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+let S = {persona:null, i:0, picks:[], reason:""};
+function seq(){ return S.persona ? PERSONAS[S.persona].dilemmas.concat(COMMON) : []; }
+
+function save(){ try{localStorage.setItem("course-sim",JSON.stringify(S));}catch(e){} }
+function load(){ try{const x=JSON.parse(localStorage.getItem("course-sim")); if(x&&x.persona&&PERSONAS[x.persona]) S=x;}catch(e){} }
+
+function evCard(id){
+  const e=EV[id]; if(!e) return "";
+  const src = e.org==="arori" ? `${DOC.arori} · ${e.page}` : `${DOC[e.org]} ${e.page}`;
+  return `<div class="ev ${e.org}">
+    <div class="src">${esc(src)}</div>
+    <b>${esc(e.title)}</b>
+    ${e.quote?`<q>${esc(e.quote)}</q>`:""}
+    <p>${esc(e.body)}</p>
+    ${e.link?`<a href="${e.link}" target="_blank" rel="noopener">아로리에서 원자료 보기 →</a>`:""}
+  </div>`;
+}
+function meter(v){ // -2..2 -> 5칸
+  let h='<div class="meter">'; for(let k=-2;k<=2;k++) h+=`<i class="${k<=v?'f':''}"></i>`; return h+'</div>';
+}
+const VTXT={good:"설명이 되는 선택",mixed:"이유에 따라 달라지는 선택",risky:"효율만 따진 선택"};
+
+function renderIntro(){
+  $("#app").innerHTML = `
+  <div class="card">
+    <h2>내신이 잘 나오는 과목을 고르면, 정말 이득일까?</h2>
+    <p class="lead">곧 2·3학년 과목을 선택합니다. 이 연습에서는 실제로 마주칠 법한 딜레마 다섯 가지를 직접 결정해 봅니다.
+    선택할 때마다 두 개의 눈으로 결과를 비교합니다.</p>
+    <div class="eyes">
+      <div class="eye calc"><h4>내신 계산기의 눈</h4><p>1등급 자리가 몇 개인지, 등급 평균이 오를지만 봅니다.</p></div>
+      <div class="eye adm"><h4>입학사정관의 눈</h4><p>왜 그 과목을 골랐는지, 진로에 필요한 과목을 피하지 않았는지 봅니다. 근거는 서울대·동국대 가이드북과 아로리 합격자 기록입니다.</p></div>
+    </div>
+    <p class="small">※ 점수는 생각을 돕기 위한 장치이며 실제 대학의 평가 점수가 아닙니다. 과목명은 2022 개정 교육과정 기준입니다.</p>
+  </div>
+  <div class="card">
+    <h2>나의 희망 진로를 골라 주세요</h2>
+    <div class="personas">
+      ${Object.entries(PERSONAS).map(([k,p])=>`<button class="persona" data-p="${k}"><b>${p.name}</b><span>${p.sub}</span></button>`).join("")}
+    </div>
+    ${S.persona?`<p class="row" style="margin-top:14px"><button class="btn ghost" id="resume">이어서 하기 (${PERSONAS[S.persona].name}, ${S.picks.filter(x=>x!=null).length}/${seq().length})</button></p>`:""}
+  </div>`;
+  document.querySelectorAll(".persona").forEach(b=>b.onclick=()=>{S={persona:b.dataset.p,i:0,picks:[],reason:""};save();renderDilemma();});
+  const r=$("#resume"); if(r) r.onclick=()=>{ const L=seq(); let k=0; while(k<L.length && S.picks[k]!=null) k++;
+    if(k<L.length){S.i=k;renderDilemma();} else if(S.done){renderReport();} else {renderReason();} };
+}
+
+function renderDilemma(){
+  const list=seq(), d=list[S.i], n=list.length, picked=S.picks[S.i];
+  const common = S.i >= PERSONAS[S.persona].dilemmas.length;
+  $("#app").innerHTML = `
+  <div class="card">
+    <div class="row" style="justify-content:space-between">
+      <span class="step-label">${PERSONAS[S.persona].name} · 딜레마 ${S.i+1} / ${n}${common?' (공통)':''}</span>
+      <button class="btn ghost noprint" id="home" style="padding:6px 12px;font-size:.85rem">처음으로</button>
+    </div>
+    <div class="progress"><i style="width:${(S.i/n)*100}%"></i></div>
+    <h2>${esc(d.title)}</h2>
+    <div class="situation">${esc(d.situation)}</div>
+    <table class="facts"><tr>${d.factHead.map(h=>`<th>${esc(h)}</th>`).join("")}</tr>
+      ${d.facts.map(r=>`<tr>${r.map(c=>`<td>${esc(c)}</td>`).join("")}</tr>`).join("")}</table>
+    <p style="margin:12px 0 0;font-weight:700">여러분이라면 어떻게 하겠습니까?</p>
+    <div class="opts">
+      ${d.options.map((o,j)=>`<button class="opt ${picked===j?'chosen':''}" data-j="${j}" ${picked!=null?'disabled':''}>
+        <span class="k">${"ABC"[j]}</span><span class="t"><b>${esc(o.label)}</b><span>${esc(o.desc)}</span></span></button>`).join("")}
+    </div>
+    <div id="fb"></div>
+  </div>`;
+  $("#home").onclick=renderIntro;
+  document.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{ S.picks[S.i]=+b.dataset.j; save(); renderDilemma(); });
+  if(picked!=null) showFeedback(d, picked);
+}
+
+function showFeedback(d,j){
+  const o=d.options[j], list=seq(), last=S.i===list.length-1;
+  const others=d.options.map((x,k)=>k===j?"":`<details><summary>${"ABC"[k]}. ${esc(x.label)} 을(를) 골랐다면?</summary>
+     <p><span class="verdict ${x.v}">${x.vt||VTXT[x.v]}</span></p><p class="small"><b>내신 계산기:</b> ${esc(x.calc)}</p><p class="small"><b>입학사정관:</b> ${esc(x.adm)}</p></details>`).join("");
+  $("#fb").innerHTML = `
+    <div style="margin-top:16px"><span class="verdict ${o.v}">${o.vt||VTXT[o.v]}</span></div>
+    <div class="eyes">
+      <div class="eye calc"><h4>내신 계산기의 눈</h4>${meter(o.eff)}<p>${esc(o.calc)}</p></div>
+      <div class="eye adm"><h4>입학사정관의 눈</h4>${meter(o.hak)}<p>${esc(o.adm)}</p></div>
+    </div>
+    <h3>근거 확인하기</h3>
+    ${o.ev.map(evCard).join("")}
+    <h3>다른 선택을 했다면?</h3>${others}
+    <div class="row" style="margin-top:16px">
+      ${S.i>0?'<button class="btn ghost" id="prev">← 이전</button>':''}
+      <button class="btn ghost" id="redo">다시 고르기</button>
+      <button class="btn" id="next">${last?'선택 이유 쓰러 가기 →':'다음 딜레마 →'}</button>
+    </div>`;
+  $("#next").onclick=()=>{ if(last){renderReason();} else {S.i++;save();renderDilemma();} window.scrollTo({top:0,behavior:"smooth"}); };
+  $("#redo").onclick=()=>{ S.picks[S.i]=null; save(); renderDilemma(); };
+  const p=$("#prev"); if(p) p.onclick=()=>{S.i--;save();renderDilemma();};
+}
+
+function renderReason(){
+  const list=seq();
+  $("#app").innerHTML = `
+  <div class="card">
+    <span class="step-label">마지막 단계</span>
+    <div class="progress"><i style="width:100%"></i></div>
+    <h2>선택 이유를 세 문장으로 써 보세요</h2>
+    <p>동국대는 “어떤 과목을 선택하더라도 수강 이유에 대한 타당성이 동반되어야 합니다”라고 말합니다(58쪽). 면접위원도 과목을 선택한 목적과 노력을 묻습니다(60쪽).
+    여러분이 내린 선택 중 가장 중요한 하나를 골라, 아래 틀에 맞춰 써 보세요.</p>
+    <table class="facts">
+      <tr><th style="width:42%">문장</th><th>점검 질문</th></tr>
+      <tr><td>① 나는 ○○ 과목을 선택했다. 이 과목에서 ○○를 배우고 싶었기 때문이다.</td><td>학습의 목적이 분명한가?</td></tr>
+      <tr><td>② 이것은 내 진로(관심) ○○와 이렇게 연결된다.</td><td>진로·지적 호기심과 이어지는가?</td></tr>
+      <tr><td>③ 등급이 걱정되더라도 ○○ 방법으로 충실히 공부하겠다.</td><td>충실히 이수할 계획이 있는가?</td></tr>
+    </table>
+    <textarea id="reason" placeholder="예) 나는 3학년에 역학과 에너지를 선택했다. 기계가 움직이는 원리를 수식으로 설명하고 싶었기 때문이다. ...">${esc(S.reason||"")}</textarea>
+    <div class="row" style="margin-top:12px">
+      <button class="btn ghost" id="back">← 딜레마로 돌아가기</button>
+      <button class="btn" id="go">결과 리포트 보기 →</button>
+    </div>
+  </div>`;
+  $("#back").onclick=()=>{S.i=list.length-1;save();renderDilemma();};
+  $("#go").onclick=()=>{S.reason=$("#reason").value;S.done=true;save();renderReport();window.scrollTo({top:0,behavior:"smooth"});};
+}
+
+function renderReport(){
+  const list=seq(), n=list.length;
+  let eff=0,hak=0,cnt={good:0,mixed:0,risky:0},iqs=[];
+  const rows=list.map((d,k)=>{const j=S.picks[k]; if(j==null) return ""; const o=d.options[j]; eff+=o.eff; hak+=o.hak; cnt[o.v]++; if(o.v!=="good"||iqs.length<2) iqs.push(o.iq);
+    return `<tr><td>${k+1}</td><td>${esc(d.title)}</td><td>${esc(o.label)}</td><td><span class="verdict ${o.v}">${o.vt||VTXT[o.v]}</span></td></tr>`;}).join("");
+  const pct=v=>Math.round((v+2*n)/(4*n)*100);
+  const e=pct(eff), h=pct(hak);
+  let msg;
+  if(cnt.risky===0 && h>=70) msg="진로에 필요한 과목을 피하지 않고, 이유를 설명할 수 있는 선택을 했습니다. 이제 남은 과제는 그 과목에서 실제로 잘하는 것입니다. 성균관대 설명회의 말처럼 가장 이상적인 것은 ‘어려운 과목에서 높은 등급’입니다.";
+  else if(e>h) msg="내신 계산기의 눈으로는 이득을 본 선택이 많지만, 입학사정관의 눈으로는 설명하기 어려운 선택이 섞여 있습니다. 서울대는 유리한 과목만 이수해 수치만 좋게 받으려 한 경우 긍정적인 평가를 받지 못하기도 한다고 밝힙니다(70쪽 Q7). 빨간색으로 표시된 항목을 다시 살펴보세요.";
+  else msg="대체로 진로를 고려한 선택을 했지만, 이유에 따라 평가가 달라질 수 있는 선택이 있습니다. 아래 예상 면접 질문에 자신 있게 답할 수 있는지 점검해 보세요.";
+  $("#app").innerHTML = `
+  <div class="card" id="report">
+    <div class="row" style="justify-content:space-between"><span class="step-label">${PERSONAS[S.persona].name} · 결과 리포트</span>
+      <span class="noprint row"><button class="btn ghost" id="print" style="padding:6px 12px;font-size:.85rem">인쇄·PDF 저장</button><button class="btn ghost" id="again" style="padding:6px 12px;font-size:.85rem">다른 진로로 다시</button></span></div>
+    <h2>나의 과목 선택, 두 개의 눈으로 보면</h2>
+    <div class="bars">
+      <div class="bar calc"><span>내신 효율 지수</span><div class="track"><i style="width:${e}%"></i></div><b>${e}</b></div>
+      <div class="bar adm"><span>학종 관점 지수</span><div class="track"><i style="width:${h}%"></i></div><b>${h}</b></div>
+    </div>
+    <p>${esc(msg)}</p>
+    <p class="small">설명이 되는 선택 ${cnt.good}개 · 이유에 따라 달라지는 선택 ${cnt.mixed}개 · 아쉬운 선택 ${cnt.risky}개</p>
+    <h3>내가 내린 선택</h3>
+    <table class="rep"><tr><th>#</th><th>딜레마</th><th>나의 선택</th><th>평가</th></tr>${rows}</table>
+    <h3>입학사정관이 물을 수 있는 질문</h3>
+    <ul class="iq">${iqs.slice(0,4).map(q=>`<li>${esc(q)}</li>`).join("")}</ul>
+    <p class="small">질문 형식은 동국대 가이드북 면접 예시 문항(49·60쪽)을 참고해 만들었습니다.</p>
+    <h3>나의 선택 이유</h3>
+    <div class="situation">${S.reason?esc(S.reason).replace(/\n/g,"<br>"):"(작성하지 않음)"}</div>
+    <h3>꼭 기억할 세 가지</h3>
+    <ol>
+      <li><b>등급은 혼자 읽히지 않는다.</b> 수강자 수·원점수·평균과 함께 읽힌다. <span class="small">(서울대 19쪽, 동국대 58쪽)</span></li>
+      <li><b>과목 선택 내역 자체가 평가 자료다.</b> 피한 과목도 기록에 남는다. <span class="small">(서울대 22쪽, 동국대 20·58쪽)</span></li>
+      <li><b>정답은 ‘어려운 과목’이 아니라 ‘이유가 있는 과목’이다.</b> 그리고 그 과목에서 최선을 다하는 것. <span class="small">(동국대 58·60쪽, 서울대 70쪽)</span></li>
+    </ol>
+    <div class="row noprint" style="margin-top:14px">
+      <button class="btn" id="toProof">증명 노트로 정리하기 →</button>
+      <button class="btn ghost" id="back2">선택 이유 고치기</button>
+    </div>
+  </div>`;
+  $("#again").onclick=()=>{S={persona:null,i:0,picks:[],reason:""};save();renderIntro();};
+  $("#print").onclick=()=>{document.querySelectorAll("section.view").forEach(s=>s.classList.remove("print-on"));$("#v-play").classList.add("print-on");window.print();};
+  $("#toProof").onclick=()=>show("proof");
+  $("#back2").onclick=renderReason;
+}
+
+/* 증명 노트 */
+function renderProof(){
+  const P=[
+   {h:"대학은 등급을 공식으로 계산하지 않고, 수강자 수·원점수·평균과 함께 읽는다.",ev:["S1","D3"],extra:true},
+   {h:"그래서 소수 인원·고난도 과목의 낮은 등급은 불리하지 않으며, 오히려 도전으로 평가될 수 있다.",ev:["S2","S4","S6","D5"]},
+   {h:"과목 선택 내역 그 자체가 평가 자료다. 무엇을 골랐는지만큼 무엇을 피했는지도 읽힌다.",ev:["S3","D1","D2","S8"]},
+   {h:"유리한 과목만 골라 수치를 관리한 선택은 긍정적으로 평가받지 못할 수 있고, 수강 이유의 타당성이 필요하다.",ev:["S5","D4","D6"]},
+   {h:"실제 합격자 기록이 이를 보여 준다. 합격자는 피하기 쉬운 과목을 더 많이 들었고, 성적표가 ‘올 1등급’도 아니었다.",ev:["D8","R1","R3","R4"]}
+  ];
+  $("#proofBox").innerHTML = P.map((p,k)=>`
+    <div class="premise"><h3>전제 ${k+1}. ${esc(p.h)}</h3>
+      ${k===0?calcBox():""}
+      <details ${k===0?"open":""}><summary>근거 ${p.ev.length}개 펼치기</summary>${p.ev.map(evCard).join("")}</details>
+    </div>`).join("") + `
+    <div class="premise conclusion"><h3>결론</h3>
+      <p>‘내신 잘 나오는 과목’, ‘많은 학생이 듣는 과목’만 고르는 선택은 등급 몇 점을 얻는 대신, 대학이 실제로 읽는 자료인 <b>과목 선택 내역</b>에서 설명하기 어려운 빈칸을 남깁니다(전제 3·4). 게다가 대학은 소수 과목의 낮은 등급을 맥락 속에서 읽으므로(전제 1·2), 효율 선택으로 얻은 ‘이득’은 생각보다 작습니다. 따라서 효율만 따진 선택은 학생부종합전형에서 우수하게 평가받기 어렵습니다.</p>
+      <h3>단, 반대로 착각하지 말 것</h3>
+      <p>어렵기만 한 과목을 고르는 것도 답이 아닙니다. 동국대는 진로에 필요한 기초 과목을 건너뛰고 심화 과목을 고른 사례를 ‘아쉬운 사례’로 듭니다. 또 서울대는 모든 교과의 성적을 반영하며, 성균관대 설명회에서도 가장 이상적인 것은 어려운 과목에서 높은 등급이라고 했습니다. <b>이유 있는 과목을 고르고, 그 과목에서 최선을 다하는 것</b>이 결론입니다.</p>
+      <details><summary>이 단서의 근거 펼치기</summary>${["D6","D4","S7","K2"].map(evCard).join("")}</details>
+      <h3>내 말로 결론 써 보기</h3>
+      <textarea placeholder="“효율만 따진 과목 선택이 불리한 이유는 ...”"></textarea>
+    </div>`;
+  const r=$("#seat"); if(r){ const f=()=>{const v=+r.value; const s1=Math.floor(v*0.10+1e-9), s2=Math.floor(v*0.34+1e-9);
+     $("#seatOut").innerHTML=`수강자 <b>${v}명</b> → 1등급 약 <b>${s1}명</b>, 2등급까지 누적 약 <b>${s2}명</b>`+(s1===0?' <span style="color:var(--risky)">(계산상 1등급이 나오기 어려움)</span>':'');}; r.oninput=f; f(); }
+}
+function calcBox(){ return `<div class="calcbox"><b>직접 확인: 5등급제에서 1등급 자리는 몇 개?</b>
+  <p class="small" style="margin:2px 0 6px">1등급 상위 10%, 2등급 누적 34% (교육부, 2028 대입 개편 확정안). 동점자가 없다고 가정한 대략적 계산입니다.</p>
+  <input type="range" id="seat" min="5" max="300" value="30"><div class="out" id="seatOut"></div>
+  <p class="small" style="margin:6px 0 0">수강자가 적은 과목에서 등급이 낮게 나오기 쉬운 이유가 여기에 있습니다. 그리고 입학사정관도 이 사실을 알고 성적을 읽습니다.</p></div>`; }
+
+/* 근거 자료실 */
+function renderLib(k){
+  document.querySelectorAll("#libTabs button").forEach(b=>b.classList.toggle("on",b.dataset.k===k));
+  let html="";
+  if(k==="snu") html=`<p class="small">${DOC.snu}</p>`+["S1","S2","S3","S4","S5","S6","S7","S8","S9","S10","S11","S12","S13"].map(evCard).join("");
+  if(k==="dgu") html=`<p class="small">${DOC.dgu}</p>`+["D1","D2","D3","D4","D5","D6","D7","D8","D9","D10"].map(evCard).join("")+aroriLikeTable();
+  if(k==="arori") html=`
+    <p>서울대 아로리의 ‘나도 입학사정관’은 실제 합격생의 학교생활기록부 일부를 공개하고 독자가 직접 평가해 보게 하는 코너입니다. 아래는 그중 과목 선택을 살펴보기 좋은 기록 4건입니다.
+    <b>아로리는 개별 평가 해설을 공개하지 않으므로</b>, 아래 기록은 ‘해설’이 아니라 ‘관찰 자료’로 활용하세요.</p>
+    ${["R1","R2","R3","R4"].map(evCard).join("")}
+    <div class="situation"><b>관찰 질문</b><br>
+    ① 네 명의 합격자 중 과학 또는 수학 평균이 1.00이 아닌 사람은 누구인가요? 그래도 합격한 이유를 추측해 봅시다.<br>
+    ② 공학·자연 계열 합격자 세 명이 공통으로 이수한 ‘Ⅱ’ 과목은 무엇인가요?<br>
+    ③ 경영대학 합격자의 사회 과목 11개 중, 여러분 학교에서 인원이 적을 것 같은 과목은 무엇인가요?</div>
+    <p><a href="${ARORI}" target="_blank" rel="noopener">아로리 ‘나도 입학사정관’ 전체 사례 보기 →</a> (2014~2026학년도, 학과별 3명씩)</p>`;
+  if(k==="etc") html=`<p class="small">${DOC.skku}</p>${evCard("K1")}${evCard("K2")}<p class="small" style="margin-top:14px">${DOC.moe}</p>${evCard("M1")}
+    <div class="note">성균관대 자료는 학교에서 받은 ‘설명회 요약본’이므로 성균관대가 직접 펴낸 공식 문서와는 표현이 다를 수 있습니다.</div>`;
+  $("#libBox").innerHTML=html;
+}
+function aroriLikeTable(){ return `<div class="case"><h4>표로 보기: 동국대 열린전공학부(자연) 2026학년도 과목별 이수 비율(%)</h4>
+  <table class="mini"><tr><th>과목</th><th>지원</th><th>최초합격</th><th>최종합격</th></tr>
+  <tr><td>물리학Ⅰ</td><td>66.3</td><td>88.0</td><td><b>96.0</b></td></tr>
+  <tr><td>화학Ⅰ</td><td>94.6</td><td>98.0</td><td>96.0</td></tr>
+  <tr><td>생명과학Ⅰ</td><td>88.0</td><td>86.0</td><td>84.0</td></tr>
+  <tr><td>지구과학Ⅰ</td><td>54.5</td><td>50.0</td><td>40.0</td></tr>
+  <tr><td>물리학Ⅱ</td><td>49.2</td><td>74.0</td><td><b>80.0</b></td></tr>
+  <tr><td>화학Ⅱ</td><td>85.1</td><td>94.0</td><td>88.0</td></tr>
+  <tr><td>생명과학Ⅱ</td><td>71.3</td><td>58.0</td><td>56.0</td></tr>
+  <tr><td>지구과학Ⅱ</td><td>20.8</td><td>16.0</td><td>16.0</td></tr></table>
+  <p class="small">출처: ${DOC.dgu} 45쪽</p></div>`; }
+
+/* 출결 */
+function renderAttend(){
+  $("#attendBox").innerHTML = `
+  <div class="card">
+    <h2>출결, 대학은 어떻게 볼까?</h2>
+    <p class="lead">“질병 결석이면 괜찮다”는 말, 절반만 맞습니다. 대학 자료와 영상을 함께 보며 확인해 봅시다.</p>
+    <h3>영상으로 먼저 보기</h3>
+    <div class="video"><iframe src="https://www.youtube-nocookie.com/embed/${VIDEO_ID}" title="출결에 대한 대학의 관점" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>
+    <p class="small">영상이 열리지 않으면 <a href="https://youtu.be/${VIDEO_ID}" target="_blank" rel="noopener">유튜브에서 보기</a></p>
+    ${VIDEO_SUMMARY.length?`<div class="situation"><b>영상 핵심 정리</b><ul>${VIDEO_SUMMARY.map(s=>`<li>${esc(s)}</li>`).join("")}</ul></div>`:""}
+    <div class="situation"><b>영상을 보며 적어 보기</b><br>① 대학이 출결 기록을 보고 알고 싶어 하는 것은 무엇인가요?<br>② ‘질병’ 결석과 ‘미인정’ 결석은 어떻게 다르게 읽히나요?<br>③ 정말 아플 때는 어떻게 해야 하나요?</div>
+    <textarea placeholder="영상을 보고 알게 된 점을 한 줄로 적어 보세요."></textarea>
+  </div>
+  <div class="card">
+    <h2>데이터로 보기: 성균관대 경영학과 학종 지원자</h2>
+    <div class="stat">
+      <div><span>전체 지원자 개근</span><b>33.8%</b></div>
+      <div><span>전체 지원자 1회 이상 결석</span><b>66.2%</b></div>
+      <div><span>합격자 1회 이상 결석</span><b>57.3%</b></div>
+      <div><span>전체 지원자 평균 결석</span><b>5.5회</b></div>
+    </div>
+    <p>합격자 집단은 개근 비율이 <b>훨씬 높고</b>, 미인정 결석은 <b>극소수</b>, 평균 결석 횟수는 <b>대폭 감소</b>했습니다.</p>
+    ${evCard("K1")}${evCard("K2")}
+  </div>
+  <div class="card">
+    <h2>가이드북으로 보기: 동국대</h2>
+    ${evCard("D10")}
+    <h3>이런 면접 질문을 받을 수 있습니다 (동국대 49쪽 예시 문항)</h3>
+    <ul class="iq"><li>미인정 결석, 지각, 조퇴가 잦은 이유에 대해 구체적으로 설명해 주실 수 있나요? 또한 이러한 상황이 대학교 진학 후 학업 수행에 어려움을 줄 가능성은 없는지 말씀해 주세요.</li><li>2학년 때 질병 지각이 7번 있었습니다. 이에 대한 구체적인 이유를 설명해 주세요.</li></ul>
+  </div>
+  <div class="card">
+    <h2>정리: 출결 세 가지 원칙</h2>
+    <ol>
+      <li><b>정말 아플 때는 쉰다.</b> 질병처럼 타당한 사유가 있는 결석은 크게 부정적으로 작용하지 않습니다. 증빙을 챙기고, 장기 결석이라면 담임 선생님과 상의해 사유가 기록되게 합니다.</li>
+      <li><b>‘효율’을 위한 질병 처리는 하지 않는다.</b> 시험공부·학원 때문에 반복되는 질병 조퇴는 기록에 패턴으로 남고, 성실성 평가에서 불리할 수 있습니다.</li>
+      <li><b>미인정은 만들지 않는다.</b> 특별한 사유 없는 결석·지각은 학교생활 충실도와 성실성에서 부정적 요인이 될 수 있습니다.</li>
+    </ol>
+  </div>`;
+}
+
+/* 교사용 자료 목록 */
+function renderSrc(){
+  $("#srcList").innerHTML = [DOC.snu, DOC.dgu, `${DOC.arori} (${ARORI})`, DOC.skku, DOC.moe, `유튜브 영상 (https://youtu.be/${VIDEO_ID})`].map(s=>`<li>${esc(s)}</li>`).join("");
+}
+
+/* 탭 */
+function show(v){
+  document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on",b.dataset.v===v));
+  document.querySelectorAll("section.view").forEach(s=>s.classList.toggle("on",s.id==="v-"+v));
+  window.scrollTo({top:0});
+}
+document.querySelectorAll("#tabs button").forEach(b=>b.onclick=()=>show(b.dataset.v));
+document.querySelectorAll("#libTabs button").forEach(b=>b.onclick=()=>renderLib(b.dataset.k));
+
+load(); renderIntro(); renderProof(); renderLib("snu"); renderAttend(); renderSrc();
+</script>
+</body>
+</html>
