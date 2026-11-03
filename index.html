@@ -141,6 +141,13 @@ table.mini th{background:#f3f5f8}
 .stat b{display:block;font-size:1.3rem;color:var(--skku)}
 .stat span{font-size:.84rem;color:var(--ink2)}
 .note{background:var(--mixed-bg);border-radius:10px;padding:10px 14px;font-size:.88rem;color:#7a4f0c;margin:10px 0}
+table.neis{border-collapse:collapse;width:100%;min-width:640px;font-size:.84rem;margin:4px 0 8px;background:#fff}
+table.neis th,table.neis td{border:1px solid #9aa3b2;padding:5px 6px;text-align:center;vertical-align:middle}
+table.neis th{background:#f1f3f6;font-weight:600;color:var(--ink2)}
+table.neis td.dist{font-size:.78rem;line-height:1.35;min-width:150px}
+.chip{border:1.5px solid var(--line);background:#fff;border-radius:99px;min-width:38px;padding:6px 12px;font:inherit;font-weight:700;cursor:pointer;color:var(--ink2)}
+.chip.done{border-color:var(--adm);color:var(--adm)}
+.chip.on{background:var(--navy);border-color:var(--navy);color:#fff}
 footer{max-width:980px;margin:0 auto;padding:0 16px 40px;font-size:.8rem;color:var(--muted)}
 
 @media print{
@@ -160,9 +167,10 @@ footer{max-width:980px;margin:0 auto;padding:0 16px 40px;font-size:.8rem;color:v
     <p>내가 고른 과목, 입학사정관은 어떻게 읽을까? — 서울대·동국대 가이드북으로 확인하는 과목 선택</p>
     <nav class="tabs" id="tabs">
       <button data-v="play" class="on">① 연습하기</button>
-      <button data-v="proof">② 증명 노트</button>
-      <button data-v="library">③ 근거 자료실</button>
-      <button data-v="attend">④ 출결 이야기</button>
+      <button data-v="read">② 성적표 읽기</button>
+      <button data-v="proof">③ 증명 노트</button>
+      <button data-v="library">④ 근거 자료실</button>
+      <button data-v="attend">⑤ 출결 이야기</button>
       <button data-v="teacher">교사용 안내</button>
     </nav>
   </div>
@@ -172,7 +180,10 @@ footer{max-width:980px;margin:0 auto;padding:0 16px 40px;font-size:.8rem;color:v
   <!-- ① 연습하기 -->
   <section class="view on" id="v-play"><div id="app"></div></section>
 
-  <!-- ② 증명 노트 -->
+  <!-- ② 성적표 읽기 -->
+  <section class="view" id="v-read"><div id="readBox"></div></section>
+
+  <!-- ③ 증명 노트 -->
   <section class="view" id="v-proof">
     <div class="card">
       <h2>증명 노트: “효율만 따진 과목 선택”은 왜 우수하게 평가받지 못할까?</h2>
@@ -190,7 +201,7 @@ footer{max-width:980px;margin:0 auto;padding:0 16px 40px;font-size:.8rem;color:v
         <button data-k="snu" class="on">서울대 가이드북</button>
         <button data-k="dgu">동국대 가이드북</button>
         <button data-k="arori">아로리 ‘나도 입학사정관’</button>
-        <button data-k="etc">성균관대·교육부</button>
+        <button data-k="etc">성균관대·교육부·교육청</button>
       </div>
       <div id="libBox"></div>
     </div>
@@ -209,8 +220,9 @@ footer{max-width:980px;margin:0 auto;padding:0 16px 40px;font-size:.8rem;color:v
         <tr><td>5분</td><td>도입: “내신 잘 나오는 과목을 고르면 손해일까?” 손들기 투표</td></tr>
         <tr><td>20분</td><td>① 연습하기: 진로 유형 하나를 골라 딜레마 5개 해결. 선택마다 ‘내신 계산기의 눈’과 ‘입학사정관의 눈’을 비교하게 합니다.</td></tr>
         <tr><td>10분</td><td>선택 이유 쓰기와 리포트 확인. 예상 면접 질문에 짝과 함께 답해 봅니다.</td></tr>
-        <tr><td>10분</td><td>② 증명 노트를 함께 읽으며 전제 1~5를 정리하고 결론을 학생 말로 바꿔 씁니다.</td></tr>
-        <tr><td>5분</td><td>④ 출결 이야기 영상 시청 후 한 줄 정리</td></tr>
+        <tr><td>10분</td><td>③ 증명 노트를 함께 읽으며 전제 1~5를 정리하고 결론을 학생 말로 바꿔 씁니다.</td></tr>
+        <tr><td>5분</td><td>⑤ 출결 이야기 영상 시청 후 한 줄 정리</td></tr>
+        <tr><td>(2차시)</td><td>② 성적표 읽기: 비교 8개를 모둠별로 나눠 ‘표만 보고 투표 → 대학의 읽기 확인 → 생각이 바뀐 이유 발표’ 순으로 진행합니다. 비교 1·3·4는 ‘등급 하나로는 알 수 없다’, 비교 5·7·8은 ‘공동교육과정을 어떻게 읽나’, 비교 6은 ‘교과별 성취를 계열에 따라 어떻게 읽나’를 다룹니다.</td></tr>
       </table>
       <h3>지도할 때 짚어 줄 점</h3>
       <ul>
@@ -641,7 +653,7 @@ function load(){ try{const x=JSON.parse(localStorage.getItem("course-sim")); if(
 
 function evCard(id){
   const e=EV[id]; if(!e) return "";
-  const src = e.org==="arori" ? `${DOC.arori} · ${e.page}` : `${DOC[e.org]} ${e.page}`;
+  const src = e.org==="arori" ? `${DOC.arori} · ${e.page}` : `${DOC[e.docKey||e.org]} ${e.page}`;
   return `<div class="ev ${e.org}">
     <div class="src">${esc(src)}</div>
     <b>${esc(e.title)}</b>
@@ -806,7 +818,7 @@ function renderProof(){
    {h:"그래서 소수 인원·고난도 과목의 낮은 등급은 불리하지 않으며, 오히려 도전으로 평가될 수 있다.",ev:["S2","S4","S6","D5"]},
    {h:"과목 선택 내역 그 자체가 평가 자료다. 무엇을 골랐는지만큼 무엇을 피했는지도 읽힌다.",ev:["S3","D1","D2","S8"]},
    {h:"유리한 과목만 골라 수치를 관리한 선택은 긍정적으로 평가받지 못할 수 있고, 수강 이유의 타당성이 필요하다.",ev:["S5","D4","D6"]},
-   {h:"실제 합격자 기록이 이를 보여 준다. 합격자는 피하기 쉬운 과목을 더 많이 들었고, 성적표가 ‘올 1등급’도 아니었다.",ev:["D8","R1","R3","R4"]}
+   {h:"실제 평가 결과가 이를 보여 준다. 합격자는 피하기 쉬운 과목을 더 많이 들었고, 평균 등급이 거의 같은 지원자들도 과목 이수와 교과별 성취에 따라 결과가 크게 갈렸다.",ev:["D8","D12","D11","R1","R3","R4"]}
   ];
   $("#proofBox").innerHTML = P.map((p,k)=>`
     <div class="premise"><h3>전제 ${k+1}. ${esc(p.h)}</h3>
@@ -834,7 +846,7 @@ function renderLib(k){
   document.querySelectorAll("#libTabs button").forEach(b=>b.classList.toggle("on",b.dataset.k===k));
   let html="";
   if(k==="snu") html=`<p class="small">${DOC.snu}</p>`+["S1","S2","S3","S4","S5","S6","S7","S8","S9","S10","S11","S12","S13"].map(evCard).join("");
-  if(k==="dgu") html=`<p class="small">${DOC.dgu}</p>`+["D1","D2","D3","D4","D5","D6","D7","D8","D9","D10"].map(evCard).join("")+aroriLikeTable();
+  if(k==="dgu") html=`<p class="small">${DOC.dgu}</p>`+["D1","D2","D3","D4","D5","D6","D7","D8","D9","D10","D11","D12"].map(evCard).join("")+aroriLikeTable();
   if(k==="arori") html=`
     <p>서울대 아로리의 ‘나도 입학사정관’은 실제 합격생의 학교생활기록부 일부를 공개하고 독자가 직접 평가해 보게 하는 코너입니다. 아래는 그중 과목 선택을 살펴보기 좋은 기록 4건입니다.
     <b>아로리는 개별 평가 해설을 공개하지 않으므로</b>, 아래 기록은 ‘해설’이 아니라 ‘관찰 자료’로 활용하세요.</p>
@@ -844,7 +856,7 @@ function renderLib(k){
     ② 공학·자연 계열 합격자 세 명이 공통으로 이수한 ‘Ⅱ’ 과목은 무엇인가요?<br>
     ③ 경영대학 합격자의 사회 과목 11개 중, 여러분 학교에서 인원이 적을 것 같은 과목은 무엇인가요?</div>
     <p><a href="${ARORI}" target="_blank" rel="noopener">아로리 ‘나도 입학사정관’ 전체 사례 보기 →</a> (2014~2026학년도, 학과별 3명씩)</p>`;
-  if(k==="etc") html=`<p class="small">${DOC.skku}</p>${evCard("K1")}${evCard("K2")}<p class="small" style="margin-top:14px">${DOC.moe}</p>${evCard("M1")}
+  if(k==="etc") html=`<p class="small">${DOC.skku}</p>${evCard("K1")}${evCard("K2")}<p class="small" style="margin-top:14px">교육부·교육청 자료</p>${evCard("M1")}${evCard("B1")}${evCard("G1")}
     <div class="note">성균관대 자료는 학교에서 받은 ‘설명회 요약본’이므로 성균관대가 직접 펴낸 공식 문서와는 표현이 다를 수 있습니다.</div>`;
   $("#libBox").innerHTML=html;
 }
@@ -887,6 +899,7 @@ function renderAttend(){
   <div class="card">
     <h2>가이드북으로 보기: 동국대</h2>
     ${evCard("D10")}
+    <div class="note">동국대 가이드북 70~71쪽의 에너지신소재공학과 비교 사례에서 출결은 최초합격자(상위 1%) 개근, 충원합격자 질병지각 3회, 1단계 불합격자 미인정지각 2회였습니다. 이 사례의 결과는 교과 성취와 전공 관심도 등 여러 요소가 함께 작용한 것으로, 출결만으로 결과가 갈렸다고 볼 수는 없습니다. 다만 상위 평가를 받은 학생일수록 출결 기록도 깨끗했다는 점은 눈여겨볼 만합니다.</div>
     <h3>이런 면접 질문을 받을 수 있습니다 (동국대 49쪽 예시 문항)</h3>
     <ul class="iq"><li>미인정 결석, 지각, 조퇴가 잦은 이유에 대해 구체적으로 설명해 주실 수 있나요? 또한 이러한 상황이 대학교 진학 후 학업 수행에 어려움을 줄 가능성은 없는지 말씀해 주세요.</li><li>2학년 때 질병 지각이 7번 있었습니다. 이에 대한 구체적인 이유를 설명해 주세요.</li></ul>
   </div>
@@ -902,7 +915,157 @@ function renderAttend(){
 
 /* 교사용 자료 목록 */
 function renderSrc(){
-  $("#srcList").innerHTML = [DOC.snu, DOC.dgu, `${DOC.arori} (${ARORI})`, DOC.skku, DOC.moe, `유튜브 영상 (https://youtu.be/${VIDEO_ID})`].map(s=>`<li>${esc(s)}</li>`).join("");
+  $("#srcList").innerHTML = [DOC.snu, DOC.dgu, `${DOC.arori} (${ARORI})`, DOC.skku, DOC.moe, DOC.goe, DOC.pen, `유튜브 영상 (https://youtu.be/${VIDEO_ID})`].map(s=>`<li>${esc(s)}</li>`).join("");
+}
+
+
+/* =========================================================
+   4. 성적표 읽기 — 두 성적표 비교 (교사 제작 비교 자료 반영)
+   행: [교과, 과목, 학점, 원점수/과목평균, 성취도, 성취도별 분포비율, 석차등급, 수강자수, 비고]
+   ========================================================= */
+Object.assign(DOC,{
+  goe:"경기도교육청(2025), 「2025 경기도 공동교육과정 운영 길라잡이」",
+  pen:"교육부(2022), 「2022 개정 교육과정 총론」 · 부산광역시교육청 고교학점제지원센터 과목 안내"
+});
+Object.assign(EV,{
+  D11:{org:"dgu",page:"68~69쪽",title:"평균 등급이 같아도 결과는 달랐다: 국제통상학과 지원자 3명",
+      quote:"",
+      body:"전체 교과 평균 등급은 A 2.88, B 2.88, C 2.94로 거의 같았지만, 서류평가 결과는 A 상위 5%(최초합격), B 상위 11%(충원합격), C 상위 53%(1단계 불합격)였습니다. A는 경제·경제수학을 이수해 전공수학역량 ‘우수’를 받았지만 3학년 과목 선택이 평이한 점이 아쉽다고 평가되었습니다. B는 영어가 매우 우수하나 국어·수학이 아쉬워 기초학업역량 ‘보통’을 받았습니다. C는 경제 과목 미이수가 아쉬움으로 지적되었고, 비주요교과 평균은 5.00이었습니다."},
+  D12:{org:"dgu",page:"70~71쪽",title:"평균 등급이 같아도 결과는 달랐다: 에너지신소재공학과 지원자 3명",
+      quote:"",
+      body:"전체 교과 평균 등급은 A 2.34, B 2.38, C 2.39였지만, 서류평가 결과는 A 상위 1%(최초합격), B 상위 10%(충원합격), C 상위 40%(1단계 불합격)였습니다. A는 국어 성취도가 다소 낮았지만 수학 성취도가 매우 높았고, 화학·물리학 관련 진로선택 과목을 공동교육과정으로 이수한 점이 전공관심도 평가에 기록되었습니다. C는 수학 이수 단위는 높지만 성적이 다소 미흡하고 물리학·화학 성취도도 낮다고 평가되었습니다. 출결은 A 개근, B 질병지각 3회, C 미인정지각 2회였습니다."},
+  G1:{org:"moe",page:"성적 처리 방식",title:"공동교육과정·온라인학교 과목은 석차등급이 없다",
+      quote:"‘석차등급’란에는 ‘･’을 입력",
+      body:"2022 개정 교육과정 기준으로 공동교육과정 및 온라인학교 개설 과목은 원점수/과목평균, 성취도, 성취도별 분포비율, 수강자 수를 산출하되 석차등급란에는 ‘·’을 입력합니다. 공동교육과정과 온라인학교 개설 과목은 학기당 최대 2개 이내로 수강할 수 있습니다."},
+  B1:{org:"moe",page:"고등학교 편제",title:"선택 과목의 기본 학점은 4학점",
+      quote:"",
+      body:"2022 개정 교육과정에서 선택 과목의 기본 학점은 4학점이며(체육·예술·교양은 3학점), 학교가 1학점 범위에서 늘리거나 줄여 편성할 수 있습니다. 같은 과목이라도 학교마다 3학점 또는 5학점으로 편성될 수 있는 이유입니다."}
+});
+EV.G1.docKey="goe"; EV.B1.docKey="pen";
+
+const _H=["교과","과목","학점","원점수/과목평균","성취도","성취도별 분포비율","석차등급","수강자수","비고"];
+const COMPARE=[
+ {title:"1등급 vs 3등급",
+  q:"같은 물리, 같은 3학점. 누가 더 우수한 학생일까요?",
+  A:[["과학","물리","3","","","","1등급","",""]],
+  B:[["과학","물리","3","","","","3등급","",""]],
+  reveal:{head:"숨어 있던 정보를 공개합니다",
+    note:"서울대 가이드북 19쪽이 제시한 예시 수치(원점수·과목평균·수강자 수)를 이 표에 넣어 본 것입니다.",
+    A:[["과학","물리","3","98/71.2","","","1등급","300",""]],
+    B:[["과학","물리","3","94/89.2","","","3등급","20",""]]},
+  read:"A는 평균 71.2점인 과목에서 98점을 받았고, B는 평균이 89.2점이나 되는 20명 과목에서 94점을 받았습니다. 둘 다 90점을 넘었지만, 20명 과목은 1등급이 2명뿐이라 94점이 3등급이 되었습니다. 서울대는 바로 이 예를 들며 두 성적을 단순히 비교하는 것은 적절하지 않다고 말합니다.",
+  key:"등급 하나만으로는 누가 더 잘했는지 알 수 없다.",
+  ev:["S1","D3"],
+  ask:"처음에 등급만 보고 판단했다면, 그때 무엇을 가정하고 있었나요?"},
+ {title:"2등급 대수 4학점 vs 2등급 대수 3학점",
+  q:"둘 다 대수 2등급입니다. 학점만 다릅니다. 누가 더 유리할까요?",
+  A:[["수학","대수","4","","","","2등급","",""]],
+  B:[["수학","대수","3","","","","2등급","",""]],
+  reveal:{head:"평균 등급을 직접 계산해 봅시다",
+    note:"평균 등급은 ‘(과목 등급 × 학점)의 합 ÷ 학점의 합’으로 구합니다. 다른 과목이 ‘국어 4학점 3등급’ 하나뿐이라고 가정하면: A = (3×4 + 2×4) ÷ 8 = 2.50, B = (3×4 + 2×3) ÷ 7 = 2.57. 같은 2등급이라도 4학점짜리가 평균 등급을 더 많이 끌어올립니다. (반대로, 내 평균보다 낮은 등급을 받은 과목이라면 학점이 클수록 평균을 더 많이 끌어내립니다.)"},
+  read:"학점은 그 과목을 배운 양, 곧 한 학기 동안의 주당 수업 시간입니다. 같은 2등급이라도 4학점 과목에서 받은 2등급은 더 많은 학습량을 소화하며 거둔 성취이고, 평균 등급 계산에서도 더 큰 비중을 차지합니다. 그래서 좋은 성취를 거둔 과목이라면 학점이 높을수록 유리합니다. 학생부종합전형은 등급을 공식으로 계산하지 않지만, 동국대는 교과 성적을 평가할 때 이수 단위(학점)를 원점수·과목평균·수강자 수와 함께 분석한다고 밝힙니다. 동국대의 지원자 비교 사례에서도 ‘수학은 이수 단위가 높지만 성적이 다소 미흡’하다는 평가가 나옵니다. 학점이 높은 과목은 그만큼 눈에 잘 띄므로, 잘하면 강점이 크고 소홀하면 약점도 크게 보입니다.",
+  key:"같은 등급이면 학점이 높은 과목의 성취가 더 무겁게 읽힌다. 학점이 높은 과목일수록 더 충실히 공부해야 하는 이유다.",
+  ev:["D3","D12","B1"],
+  ask:"우리 학교 교육과정 편제표에서 학점이 가장 높은 선택 과목은 무엇인가요? 그 과목을 들을 계획이라면 어떻게 준비하겠습니까?"},
+ {title:"1등급 성취도 A vs 1등급 성취도 B",
+  q:"같은 대수, 같은 1등급인데 성취도가 다릅니다. 어떻게 이런 일이 생길까요?",
+  A:[["수학","대수","4","","A","","1등급","",""]],
+  B:[["수학","대수","4","","B","","1등급","",""]],
+  read:"성취도(A~E)는 정해진 기준에 얼마나 도달했는지를 나타내는 절대평가이고, 석차등급(1~5)은 수강자 중 몇 번째인지를 나타내는 상대평가입니다. 2022 개정 교육과정에서는 두 결과를 함께 기재합니다. 1등급인데 성취도가 B라면 그 학기 시험이 어려워서 상위 10% 학생도 A 기준에 도달하지 못했다는 뜻입니다. 이 정보만으로는 누가 더 우수한지 판단할 수 없고, 원점수와 과목평균을 함께 봐야 합니다(다음 비교).",
+  key:"성취도와 석차등급은 서로 다른 질문에 대한 답이다.",
+  ev:["M1","D3"],
+  ask:"성취도 A와 1등급 중 하나만 받을 수 있다면 어느 쪽을 택하겠습니까? 그 이유는?"},
+ {title:"원점수 100 · 평균 85 vs 원점수 80 · 평균 40",
+  q:"두 학생 모두 1등급입니다. 원점수와 과목평균까지 보면 누가 더 우수할까요?",
+  A:[["수학","대수","4","100/85","A","","1등급","",""]],
+  B:[["수학","대수","4","80/40","B","","1등급","",""]],
+  read:"A는 평균이 85점인 비교적 쉬운 시험에서 만점을 받았습니다. 기준에는 완벽하게 도달했지만, 많은 학생이 고득점을 받아 변별이 크지 않은 시험이었습니다. B는 평균이 40점인 어려운 시험에서 평균의 두 배인 80점을 받았습니다. 절대 기준으로는 B이지만, 함께 수강한 학생들 사이에서는 압도적인 위치입니다. 대학은 어느 숫자 하나로 판단하지 않고 원점수·과목평균·성취도별 분포비율을 함께 읽어 수치의 의미를 해석하며, 세부능력 및 특기사항과 연계해 평가합니다.",
+  key:"같은 1등급도 ‘어떤 시험에서, 어떤 학생들 사이에서’ 받았는지에 따라 의미가 다르다.",
+  ev:["S1","D3","S7"],
+  ask:"B 학생의 우수성이 더 분명히 드러나려면 세특에 어떤 기록이 있으면 좋을까요?"},
+ {title:"학교 교육과정 vs 공동교육과정·온라인학교",
+  q:"같은 역학과 에너지 과목입니다. 한 명은 우리 학교에서, 한 명은 공동교육과정으로 이수했습니다.",
+  A:[["과학","역학과 에너지","3","92/66.7","A","A(10.5) B(18.4) C(24.6) D(14.9) E(31.6)","1등급","114",""]],
+  B:[["과학","역학과 에너지","3","98/88.0","A","A(40.0) B(40.0) C(20.0) D(0.0) E(0.0)","·","15","공동"]],
+  read:"공동교육과정·온라인학교 과목은 석차등급란에 ‘·’이 찍힙니다. 그래서 대학은 원점수/과목평균, 성취도별 분포비율, 수강자 수로 성취를 읽습니다. A는 114명 중 A를 받은 학생이 10.5%뿐인 과목에서 A와 1등급을 받았습니다. B는 평균 88점, A 비율 40%인 15명 과목에서 A를 받았습니다. 숫자만 보면 A의 상대적 성취가 더 분명합니다. 그러나 B가 우리 학교에 개설되지 않은 과목을 찾아 들은 것이라면 그 자체가 과목 이수 노력으로 읽힐 수 있습니다. 동국대 에너지신소재공학과 최초합격자(상위 1%)도 화학·물리학 관련 진로선택 과목을 공동교육과정으로 이수했습니다. 반대로 ‘등급이 안 나와서’ 공동교육과정을 고른 것이라면 수강 이유의 타당성을 설명하기 어렵습니다.",
+  key:"석차등급이 없으면 성취도별 분포비율이 등급의 역할을 한다. 공동교육과정의 가치는 ‘왜 들었는가’에서 나온다.",
+  ev:["G1","D12","D7","D4"],
+  ask:"우리 학교에 개설되지 않은 과목 중 내 진로에 필요한 과목이 있나요? 있다면 어떤 경로로 들을 수 있을까요?"},
+ {title:"1등급 수학·과학 / 3등급 국어·영어 vs 그 반대",
+  q:"공학 계열에 지원한다면 누가 더 우수할까요? 인문·사회 계열이라면요?",
+  A:[["국어","독서와 작문","4","","","","3등급","",""],["영어","영어 독해와 작문","4","","","","3등급","",""],["수학","대수","4","","","","1등급","",""],["과학","역학과 에너지","4","","","","1등급","",""]],
+  B:[["국어","독서와 작문","4","","","","1등급","",""],["영어","영어 독해와 작문","4","","","","1등급","",""],["수학","대수","4","","","","3등급","",""],["과학","역학과 에너지","4","","","","3등급","",""]],
+  read:"두 학생의 평균 등급은 2.00으로 똑같습니다. 그러나 대학은 평균 하나로 읽지 않습니다. 동국대는 ‘기초학업역량’(국어·수학·영어 중심)과 ‘전공수학역량’(전공 관련 교과의 이수 과정과 성취도)을 따로 평가합니다. 공학 계열이라면 A는 전공 관련 교과가 강하지만 국어·영어가 아쉽고, B는 기초교과 중 수학과 전공 관련 과학이 약점이 됩니다. 실제로 동국대 에너지신소재공학과 지원자 3명은 평균 등급이 2.34~2.39로 거의 같았지만, 수학·전공 교과 성취와 전공 관심도에 따라 상위 1%와 40%로 갈렸습니다. 서울대는 모든 교과의 성적을 반영하며 고르게 우수한 학생을 긍정적으로 평가합니다.",
+  key:"평균 등급이 같아도 ‘어느 교과에서’ 잘했는지는 지원 계열에 따라 다르게 읽힌다. 다만 3등급 교과가 보이지 않게 되는 것은 아니다.",
+  ev:["D1","D12","D11","S7"],
+  ask:"내가 지원하려는 계열에서 ‘기초교과’와 ‘전공 관련 교과’는 각각 무엇인가요?"},
+ {title:"학교 교육과정만 이수 vs 공동교육과정·온라인학교까지 이수",
+  q:"학교 과목 성적은 똑같습니다. 한 명은 공동교육과정 과목 두 개를 더 들었습니다.",
+  A:[["국어","독서와 작문","4","","B","","2등급","",""],["영어","영어 독해와 작문","4","","B","","2등급","",""],["수학","대수","4","","B","","2등급","",""],["과학","역학과 에너지","4","","B","","2등급","",""]],
+  B:[["국어","독서와 작문","4","","B","","2등급","",""],["영어","영어 독해와 작문","4","","B","","2등급","",""],["수학","대수","4","","B","","2등급","",""],["과학","역학과 에너지","4","","B","","2등급","",""],["수학","수학과제 탐구","3","","A","","·","","공동"],["과학","과학과제 연구","3","","A","","·","","공동"]],
+  read:"학교 안 성적은 같으므로, 차이는 B가 학교 밖 기회까지 찾아 이수했다는 점입니다. 서울대는 학업태도를 판단할 때 과목 선택 노력을 보고, 동국대는 ‘학습의 주도성’에서 과목 이수 노력을 평가합니다. 그래서 B의 추가 이수는 긍정적으로 읽힐 가능성이 큽니다. 단, 두 과목이 진로나 관심과 어떻게 이어지는지, 세특에서 충실히 이수한 모습이 드러나는지가 함께 확인되어야 합니다. 공동교육과정은 학기당 최대 2과목까지 들을 수 있으므로, 무엇을 들을지 고르는 것 자체가 선택입니다.",
+  key:"같은 성적이라면 ‘배움의 기회를 스스로 넓힌 흔적’이 차이를 만든다. 단, 이유와 충실성이 함께 보여야 한다.",
+  ev:["S3","D1","D4","G1"],
+  ask:"B가 이 두 과목을 들은 이유를 자기소개 한 문장으로 써 본다면?"},
+ {title:"학교 과목에 충실 vs 학교 과목은 약하고 심화 과목만 A",
+  q:"B는 고급 과목을 두 개나 더 들었고 둘 다 A입니다. 그렇다면 B가 더 우수할까요?",
+  A:[["수학","대수","4","","A","","2등급","",""],["과학","역학과 에너지","4","","A","","2등급","",""]],
+  B:[["수학","대수","4","","C","","4등급","",""],["과학","역학과 에너지","4","","C","","4등급","",""],["수학","고급 대수","3","","A","","·","","공동"],["과학","고급 물리학","3","","A","","·","","공동"]],
+  read:"B의 기록은 도전적으로 보이지만, 기초 과목인 대수와 역학과 에너지가 C·4등급인데 그 위의 고급 과목이 A라는 점이 오히려 질문을 부릅니다. 동국대는 기초 역량을 탄탄히 쌓기보다 심화 과목 이수 자체에 초점을 둔 선택을 ‘아쉬운 사례’로 들고, 선행 과목을 충실히 이수하지 않고 심화·전문 과목을 듣는 경우 학습을 충실히 했는지 의문이 남을 수 있다고 말합니다. 또 공동교육과정 과목은 석차등급 없이 분포비율로 읽히므로, A의 의미도 그 과목의 분포에 따라 달라집니다. 성균관대 설명회의 말처럼 가장 이상적인 것은 어려운 과목에서 높은 성취를 내는 것이고, 그 출발점은 기초 과목입니다.",
+  key:"심화 과목은 기초 과목 위에 쌓일 때 빛난다. 기초가 흔들린 채 쌓은 심화는 ‘보여 주기’로 읽힐 수 있다.",
+  ev:["D6","D4","K2","G1"],
+  ask:"B 학생이 면접에서 ‘대수는 C인데 고급 대수는 A인 이유’를 질문받는다면 어떻게 답해야 할까요?"}
+];
+
+function gradeTable(rows){
+  return `<div style="overflow-x:auto"><table class="neis"><tr>${_H.map(h=>`<th>${h}</th>`).join("")}</tr>${
+    rows.map(r=>`<tr>${r.map((c,i)=>`<td${i===5?' class="dist"':''}>${esc(c)}</td>`).join("")}</tr>`).join("")}</table></div>`;
+}
+let RV={};
+function renderRead(){
+  const box=$("#readBox");
+  box.innerHTML=`<div class="card">
+    <h2>성적표 읽기: 두 학생 중 누가 더 우수할까?</h2>
+    <p class="lead">학교생활기록부의 교과학습발달상황 표를 두 장씩 비교합니다. 먼저 표만 보고 판단한 뒤, ‘대학은 이렇게 읽는다’를 열어 생각이 바뀌는지 확인해 보세요.</p>
+    <p class="small">※ 표의 과목명은 2022 개정 교육과정 기준이며, 빈칸은 아직 공개되지 않은 정보입니다. 수치는 비교를 위해 만든 예시이고, 근거 자료의 수치를 옮긴 경우 따로 밝혔습니다.</p>
+    <div class="row" id="readNav" style="gap:6px">${COMPARE.map((c,k)=>`<button class="chip" data-k="${k}">${k+1}</button>`).join("")}</div>
+  </div><div id="cmpBox"></div>`;
+  box.querySelectorAll(".chip").forEach(b=>b.onclick=()=>showCmp(+b.dataset.k));
+  showCmp(0);
+}
+function showCmp(k){
+  const c=COMPARE[k], st=RV[k]||{};
+  document.querySelectorAll("#readNav .chip").forEach((b,i)=>{b.classList.toggle("on",i===k);b.classList.toggle("done",!!(RV[i]&&RV[i].vote));});
+  const voteTxt={A:"학생 A가 더 우수하다",B:"학생 B가 더 우수하다",N:"이것만으로는 판단하기 어렵다"};
+  $("#cmpBox").innerHTML=`<div class="card">
+    <span class="step-label">비교 ${k+1} / ${COMPARE.length}</span>
+    <h2>${esc(c.title)}</h2>
+    <p style="font-weight:700">${esc(c.q)}</p>
+    <h3>학생 A</h3>${gradeTable(c.A)}
+    <h3>학생 B</h3>${gradeTable(c.B)}
+    <div class="opts" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr))">
+      ${["A","B","N"].map(v=>`<button class="opt ${st.vote===v?'chosen':''}" data-v="${v}" ${st.vote?'disabled':''}><span class="k">${v==="N"?"?":v}</span><span class="t"><b>${voteTxt[v]}</b></span></button>`).join("")}
+    </div>
+    <div id="cmpFb"></div>
+  </div>`;
+  document.querySelectorAll("#cmpBox .opt").forEach(b=>b.onclick=()=>{RV[k]={vote:b.dataset.v};showCmp(k);});
+  if(!st.vote) return;
+  const rv=c.reveal;
+  $("#cmpFb").innerHTML=`
+    <p class="small" style="margin-top:12px">나의 첫 판단: <b>${voteTxt[st.vote]}</b></p>
+    ${rv?`<div class="calcbox"><b>${esc(rv.head)}</b><p class="small" style="margin:4px 0">${esc(rv.note)}</p>
+       ${rv.A?`<h3>학생 A</h3>${gradeTable(rv.A)}<h3>학생 B</h3>${gradeTable(rv.B)}`:""}</div>`:""}
+    <div class="eye adm" style="margin-top:12px"><h4>대학은 이렇게 읽는다</h4><p>${esc(c.read)}</p></div>
+    <div class="situation" style="margin-top:12px"><b>핵심</b> ${esc(c.key)}</div>
+    <h3>근거 확인하기</h3>${c.ev.map(evCard).join("")}
+    <h3>생각해 보기</h3><p>${esc(c.ask)}</p><textarea placeholder="내 생각을 적어 보세요."></textarea>
+    <div class="row" style="margin-top:14px">
+      <button class="btn ghost" id="cmpRedo">다시 판단하기</button>
+      ${k<COMPARE.length-1?`<button class="btn" id="cmpNext">다음 비교 →</button>`:`<button class="btn" id="cmpEnd">증명 노트로 정리하기 →</button>`}
+    </div>`;
+  $("#cmpRedo").onclick=()=>{delete RV[k];showCmp(k);};
+  const n=$("#cmpNext"); if(n) n.onclick=()=>{showCmp(k+1);window.scrollTo({top:0,behavior:"smooth"});};
+  const e=$("#cmpEnd"); if(e) e.onclick=()=>show("proof");
 }
 
 /* 탭 */
@@ -914,7 +1077,7 @@ function show(v){
 document.querySelectorAll("#tabs button").forEach(b=>b.onclick=()=>show(b.dataset.v));
 document.querySelectorAll("#libTabs button").forEach(b=>b.onclick=()=>renderLib(b.dataset.k));
 
-load(); renderIntro(); renderProof(); renderLib("snu"); renderAttend(); renderSrc();
+load(); renderIntro(); renderRead(); renderProof(); renderLib("snu"); renderAttend(); renderSrc();
 </script>
 </body>
 </html>
