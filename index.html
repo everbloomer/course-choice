@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>과목 선택 연습실 — 입학사정관은 내 선택을 어떻게 읽을까?</title>
+<title>내 학생부 톺아보기 — 대학은 내 학교생활기록부를 어떻게 읽을까?</title>
 <meta name="description" content="고교학점제 과목 선택 딜레마를 직접 경험하고, 서울대·동국대 학생부종합전형 가이드북을 근거로 효율 위주 선택의 한계를 확인하는 연습 페이지">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <style>
@@ -29,7 +29,9 @@ header.top .wrap{padding-top:4px}
 header.top .maker{font-size:.86rem;color:#c9d6ea;margin:-.4rem 0 1rem}
 header.top .maker b{color:#fff;font-weight:700}
 header.top p{margin:.35rem 0 1rem;color:#c9d6ea;font-size:.95rem}
-nav.tabs{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+nav.tabs{display:flex;gap:4px 2px;flex-wrap:wrap;scrollbar-width:none}
+@media (max-width:720px){nav.tabs{flex-wrap:nowrap;overflow-x:auto}}
+nav.tabs button{white-space:nowrap}
 nav.tabs button{flex:0 0 auto;border:0;background:transparent;color:#c9d6ea;padding:10px 14px;font:inherit;font-size:.93rem;border-radius:10px 10px 0 0;cursor:pointer}
 nav.tabs button.reset{margin-left:auto;color:#ffd9a8;font-weight:700}
 nav.tabs button.reset:hover{color:#fff}
@@ -154,6 +156,15 @@ table.neis td.dist{font-size:.78rem;line-height:1.35;min-width:150px}
 .chip{border:1.5px solid var(--line);background:#fff;border-radius:99px;min-width:38px;padding:6px 12px;font:inherit;font-weight:700;cursor:pointer;color:var(--ink2)}
 .chip.done{border-color:var(--adm);color:var(--adm)}
 .chip.on{background:var(--navy);border-color:var(--navy);color:#fff}
+/* 기록 비교 */
+.rec{border:1px solid #9aa3b2;border-radius:10px;background:#fff;overflow:hidden}
+.rec-h{background:#f1f3f6;font-weight:700;font-size:.88rem;padding:7px 12px;color:var(--ink2);border-bottom:1px solid #9aa3b2}
+.rec p{margin:0;padding:10px 12px;font-size:.92rem;line-height:1.7}
+.ev.khu{border-left-color:#8b1e3f} .ev.khu .src{color:#8b1e3f}
+.ev.cau{border-left-color:#1d4f91} .ev.cau .src{color:#1d4f91}
+.secnav{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 14px}
+.secnav button{border:1.5px solid var(--navy);background:#fff;color:var(--navy);border-radius:10px;padding:8px 16px;font:inherit;font-weight:700;cursor:pointer}
+.secnav button.on{background:var(--navy);color:#fff}
 footer .credit{margin-top:8px;font-weight:700;color:var(--ink2)}
 footer{max-width:980px;margin:0 auto;text-align:center;padding:0 16px 40px;font-size:.8rem;color:var(--muted)}
 
@@ -170,15 +181,16 @@ footer{max-width:980px;margin:0 auto;text-align:center;padding:0 16px 40px;font-
 
 <header class="top">
   <div class="wrap">
-    <h1>과목 선택 연습실</h1>
-    <p>내가 고른 과목, 입학사정관은 어떻게 읽을까? — 서울대·동국대 가이드북으로 확인하는 과목 선택</p>
+    <h1>내 학생부 톺아보기</h1>
+    <p>내 학교생활기록부, 대학은 어떻게 읽을까? — 대학이 펴낸 가이드북과 입학처 자료로 항목별로 확인합니다</p>
     <div class="maker">만든이 · <b>행신고등학교 3학년부장 정진</b></div>
     <nav class="tabs" id="tabs">
-      <button data-v="play" class="on">① 연습하기</button>
-      <button data-v="read">② 성적표 읽기</button>
-      <button data-v="proof">③ 증명 노트</button>
-      <button data-v="library">④ 근거 자료실</button>
-      <button data-v="attend">⑤ 출결 이야기</button>
+      <button data-v="grade" class="on">① 교과학습발달상황(숫자)</button>
+      <button data-v="seteuk">② 교과학습발달상황(세특)</button>
+      <button data-v="attend">③ 출결 상황</button>
+      <button data-v="chang">④ 창의적 체험활동</button>
+      <button data-v="haeng">⑤ 행동특성 및 종합의견</button>
+      <button data-v="evidence">⑥ 근거자료</button>
       <button data-v="teacher">교사용 안내</button>
       <button id="resetAll" class="reset" title="지금까지의 선택·투표·작성 내용을 모두 지웁니다">↺ 처음부터 다시</button>
     </nav>
@@ -186,58 +198,72 @@ footer{max-width:980px;margin:0 auto;text-align:center;padding:0 16px 40px;font-
 </header>
 
 <main>
-  <!-- ① 연습하기 -->
-  <section class="view on" id="v-play"><div id="app"></div></section>
-
-  <!-- ② 성적표 읽기 -->
-  <section class="view" id="v-read"><div id="readBox"></div></section>
-
-  <!-- ③ 증명 노트 -->
-  <section class="view" id="v-proof">
-    <div class="card">
-      <h2>증명 노트: “효율만 따진 과목 선택”은 왜 우수하게 평가받지 못할까?</h2>
-      <p class="lead">아래 다섯 개의 전제를 차례로 확인하면 결론이 나옵니다. 각 전제에는 대학이 직접 펴낸 자료의 쪽수를 붙였습니다. 직접 펼쳐 확인해 보세요.</p>
-    </div>
-    <div class="proof" id="proofBox"></div>
+  <!-- ① 교과학습발달상황(숫자) -->
+  <section class="view on" id="v-grade">
+    <div class="secnav" data-g="grade"><button data-s="play" class="on">과목 선택 연습</button><button data-s="read">성적표 읽기</button></div>
+    <div id="sub-play"><div id="app"></div></div>
+    <div id="sub-read" hidden><div id="readBox"></div></div>
   </section>
 
-  <!-- ③ 근거 자료실 -->
-  <section class="view" id="v-library">
-    <div class="card">
-      <h2>근거 자료실</h2>
-      <p class="small">이 페이지에서 인용한 모든 근거입니다. 원문은 짧게만 옮기고 나머지는 요약했으므로, 정확한 맥락은 원자료의 해당 쪽에서 확인하세요.</p>
-      <div class="subtabs" id="libTabs">
-        <button data-k="snu" class="on">서울대 가이드북</button>
-        <button data-k="dgu">동국대 가이드북</button>
-        <button data-k="arori">아로리 ‘나도 입학사정관’</button>
-        <button data-k="etc">성균관대·교육부·교육청</button>
-      </div>
-      <div id="libBox"></div>
-    </div>
-  </section>
+  <!-- ② 세부능력 및 특기사항 -->
+  <section class="view" id="v-seteuk"><div id="seteukBox"></div></section>
 
-  <!-- ④ 출결 -->
+  <!-- ③ 출결 상황 -->
   <section class="view" id="v-attend"><div id="attendBox"></div></section>
+
+  <!-- ④ 창의적 체험활동 -->
+  <section class="view" id="v-chang"><div id="changBox"></div></section>
+
+  <!-- ⑤ 행동특성 및 종합의견 -->
+  <section class="view" id="v-haeng"><div id="haengBox"></div></section>
+
+  <!-- ⑥ 근거자료 -->
+  <section class="view" id="v-evidence">
+    <div class="secnav" data-g="evidence"><button data-s="proof" class="on">증명 노트</button><button data-s="library">근거 자료실</button></div>
+    <div id="sub-proof">
+      <div class="card">
+        <h2>증명 노트: “효율만 따진 과목 선택”은 왜 우수하게 평가받지 못할까?</h2>
+        <p class="lead">아래 다섯 개의 전제를 차례로 확인하면 결론이 나옵니다. 각 전제에는 대학이 직접 펴낸 자료의 쪽수를 붙였습니다. 직접 펼쳐 확인해 보세요.</p>
+      </div>
+      <div class="proof" id="proofBox"></div>
+    </div>
+    <div id="sub-library" hidden>
+      <div class="card">
+        <h2>근거 자료실</h2>
+        <p class="small">이 페이지에서 인용한 모든 근거입니다. 원문은 짧게만 옮기고 나머지는 요약했으므로, 정확한 맥락은 원자료의 해당 쪽에서 확인하세요.</p>
+        <div class="subtabs" id="libTabs">
+          <button data-k="snu" class="on">서울대 가이드북</button>
+          <button data-k="dgu">동국대 가이드북</button>
+          <button data-k="arori">아로리 ‘나도 입학사정관’</button>
+          <button data-k="att">경희대·중앙대·성균관대(출결)</button>
+          <button data-k="moe">교육부·교육청</button>
+        </div>
+        <div id="libBox"></div>
+      </div>
+    </div>
+  </section>
 
   <!-- 교사용 -->
   <section class="view" id="v-teacher">
     <div class="card">
       <h2>교사용 안내</h2>
-      <h3>수업 흐름 (50분 기준)</h3>
+      <h3>섹션별 활용 방법</h3>
       <table class="facts">
-        <tr><th style="width:110px">시간</th><th>활동</th></tr>
-        <tr><td>5분</td><td>도입: “내신 잘 나오는 과목을 고르면 손해일까?” 손들기 투표</td></tr>
-        <tr><td>20분</td><td>① 연습하기: 진로 유형 하나를 골라 딜레마 5개 해결. 선택마다 ‘내신 계산기의 눈’과 ‘입학사정관의 눈’을 비교하게 합니다.</td></tr>
-        <tr><td>10분</td><td>선택 이유 쓰기와 리포트 확인. 예상 면접 질문에 짝과 함께 답해 봅니다.</td></tr>
-        <tr><td>10분</td><td>③ 증명 노트를 함께 읽으며 전제 1~5를 정리하고 결론을 학생 말로 바꿔 씁니다.</td></tr>
-        <tr><td>5분</td><td>⑤ 출결 이야기 영상 시청 후 한 줄 정리</td></tr>
-        <tr><td>(2차시)</td><td>② 성적표 읽기: 비교 8개를 모둠별로 나눠 ‘표만 보고 투표 → 대학의 읽기 확인 → 생각이 바뀐 이유 발표’ 순으로 진행합니다. 비교 1·3·4는 ‘등급 하나로는 알 수 없다’, 비교 5·7·8은 ‘공동교육과정을 어떻게 읽나’, 비교 6은 ‘교과별 성취를 계열에 따라 어떻게 읽나’를 다룹니다.</td></tr>
+        <tr><th style="width:190px">섹션</th><th>활동</th><th style="width:80px">시간</th></tr>
+        <tr><td>① 교과학습발달상황(숫자)</td><td><b>과목 선택 연습:</b> 진로 유형 하나를 골라 딜레마 4개를 해결하고, 선택 이유 쓰기와 리포트(예상 면접 질문)까지 진행합니다.<br><b>성적표 읽기:</b> 비교 8개를 ‘표만 보고 투표 → 대학의 읽기 확인 → 생각이 바뀐 이유 발표’ 순으로 진행합니다.</td><td>각 20분</td></tr>
+        <tr><td>② 세부능력 및 특기사항</td><td>동국대 가이드북의 긍정·아쉬운 사례 두 쌍을 비교합니다. ‘그 과목의 역량’과 ‘고교 수준’을 짚어 주세요.</td><td>10분</td></tr>
+        <tr><td>③ 출결 상황</td><td>출결 딜레마 4개를 해결한 뒤 경희대·중앙대·성균관대·동국대의 입장을 확인합니다. 경희대 탭의 영상을 함께 시청하면 좋습니다.</td><td>15분</td></tr>
+        <tr><td>④ 창의적 체험활동</td><td>자율·동아리·봉사·진로 기록 4쌍을 비교합니다. ‘참여했다’와 ‘성장했다’의 차이를 찾게 합니다.</td><td>15분</td></tr>
+        <tr><td>⑤ 행동특성 및 종합의견</td><td>기록 2쌍을 비교하며 행특의 재료가 학생의 ‘장면’임을 확인합니다.</td><td>10분</td></tr>
+        <tr><td>⑥ 근거자료</td><td>증명 노트로 과목 선택의 결론을 정리하고, 근거 자료실에서 원자료 쪽수를 확인합니다.</td><td>10분</td></tr>
       </table>
       <h3>지도할 때 짚어 줄 점</h3>
       <ul>
         <li>이 연습의 결론은 <b>“어려운 과목이 정답”이 아닙니다.</b> 동국대 가이드북은 진로와 무관하게 어려워 보이는 과목만 고른 사례를 ‘아쉬운 사례’로 제시합니다(58·60쪽). 핵심은 <b>수강 이유의 타당성</b>과 <b>충실한 이수</b>입니다.</li>
         <li>성적이 무의미하다는 뜻도 아닙니다. 서울대는 모든 교과의 3년간 성취를 반영하며, 고르게 우수한 학생을 긍정적으로 평가한다고 밝힙니다(70쪽 Q9).</li>
         <li>점수(내신 효율 지수·학종 관점 지수)는 토론을 위한 장치일 뿐, 실제 대학의 평가 점수가 아닙니다.</li>
+        <li>세특·창체·행특은 교사가 관찰해 쓰는 기록입니다. 학생에게는 ‘기록을 잘 받는 법’이 아니라 ‘수업과 학교생활에서 어떤 행동이 기록의 재료가 되는가’로 안내해 주세요.</li>
+        <li>출결 섹션의 경희대 내용 중 영상 부분은 영상을 보고 선생님이 정리한 내용이며, 정량평가 환산 기준과 2028 정시 관련 내용은 언론 보도를 근거로 했습니다. 실제 적용 방식은 각 대학 모집요강으로 확인하도록 안내해 주세요.</li>
         <li>가이드북의 사례는 2015 개정 교육과정 과목명(물리학Ⅰ·Ⅱ, 화학Ⅱ, 미적분 등)입니다. 이 페이지의 딜레마는 2022 개정 교육과정 과목명으로 바꿔 구성했으며, 두 체계의 과목이 정확히 일대일로 대응하지는 않습니다.</li>
         <li>2028학년도 이후 대학별 전공 연계 권장과목은 각 대학이 2022 개정 기준으로 따로 안내하므로, 학생이 희망 대학의 최신 안내를 직접 확인하게 해 주세요.</li>
       </ul>
@@ -630,24 +656,6 @@ const COMMON = [
     calc:"시간 배분 면에서는 효율적입니다.",
     adm:"관심 과목에서의 몰입은 좋은 기록이 됩니다. 다만 동국대는 ‘자신이 선택한 모든 과목’에 대한 책임감을 강조합니다. 적당히 한 과목의 낮은 성취도나 빈약한 기록도 함께 읽힌다는 점을 기억하세요.",
     ev:["D2","S7"],iq:"관심이 적었던 과목에서는 어떻게 학습을 이어 갔나요?"}
-  ]},
- {title:"기말고사 사흘 전, 조퇴하고 집에서 공부할까?",
-  situation:"2학년 기말고사가 사흘 남았습니다. 컨디션이 조금 안 좋습니다. 친구는 “병원 들렀다가 질병 조퇴하면 생기부에 문제없대. 집에서 공부하는 게 훨씬 효율적이야”라고 합니다. 이번 학기에 비슷한 이유로 이미 두 번 조퇴했습니다.",
-  facts:[["질병 조퇴","증빙 있으면 ‘질병’으로 기록"],["미인정 지각·조퇴","사유 없이 기록"],["끝까지 수업","공부 시간 감소"]],
-  factHead:["선택","기록"],
-  options:[
-   {label:"질병 조퇴하고 집에서 시험공부",desc:"질병 처리하면 괜찮다고 하니까.",eff:1,hak:-2,v:"risky",
-    calc:"시험 직전 공부 시간을 몇 시간 더 확보할 수 있습니다.",
-    adm:"성균관대 설명회 자료에서는 습관적인 질병 조퇴가 성실성 평가에서 감점 요인이며, 질병 결석도 개근보다 불리하다고 했습니다. 경영학과 학종 합격자 집단은 전체 지원자보다 개근 비율이 훨씬 높고 평균 결석 횟수가 크게 적었습니다. 동국대도 질병·기타 사유의 결석과 지각이 계속 반복되면 면접 질문으로 이어질 수 있다고 안내합니다.",
-    ev:["K1","K2","D10"],iq:"2학년 때 질병 조퇴가 여러 번 있었는데, 구체적인 이유를 설명해 주세요."},
-   {label:"수업을 끝까지 듣고 저녁에 공부",desc:"컨디션 조절을 하며 일상을 지킨다.",eff:0,hak:2,v:"good",
-    calc:"공부 시간은 조금 줄지만 수업 내용이 곧 시험 범위입니다.",
-    adm:"동국대는 출결을 성실성을 보여 주는 가장 기본적인 요소라고 설명합니다. 다만 정말 아플 때는 무리하지 말고 쉬어야 합니다. 질병처럼 타당한 이유가 있는 결석은 크게 부정적으로 작용하지 않으며, 성균관대 설명회에서는 사유를 담임 선생님 종합의견에 명시하도록 권장했습니다.",
-    ev:["D10","K1","K2"],iq:"3년 동안 학교생활의 성실성을 지키기 위해 스스로 세운 원칙이 있나요?"},
-   {label:"지각 몇 번쯤은 괜찮다",desc:"아침에 늦게까지 자고 공부하면 효율이 더 좋다.",eff:0,hak:-2,v:"risky",
-    calc:"수면 시간을 조금 더 확보할 수 있습니다.",
-    adm:"동국대는 특별한 사유 없는 반복적 결석과 다수의 미인정이 학교생활 충실도와 성실성 면에서 부정적 요인이 될 수 있다고 밝힙니다. 성균관대 경영학과 학종 합격자 중 미인정 결석이 있는 학생은 극소수였습니다.",
-    ev:["D10","K1"],iq:"미인정 지각이 잦은 이유를 설명해 주시고, 대학 진학 후 학업에 어려움이 없을지 말씀해 주세요."}
   ]}
 ];
 
@@ -664,13 +672,13 @@ function load(){ try{const x=JSON.parse(localStorage.getItem("course-sim")); if(
 
 function evCard(id){
   const e=EV[id]; if(!e) return "";
-  const src = e.org==="arori" ? `${DOC.arori} · ${e.page}` : `${DOC[e.docKey||e.org]} ${e.page}`;
+  const src = e.src ? `${e.src}${e.page?' '+e.page:''}` : e.org==="arori" ? `${DOC.arori} · ${e.page}` : `${DOC[e.docKey||e.org]} ${e.page}`;
   return `<div class="ev ${e.org}">
     <div class="src">${esc(src)}</div>
     <b>${esc(e.title)}</b>
     ${e.quote?`<q>${esc(e.quote)}</q>`:""}
     <p>${esc(e.body)}</p>
-    ${e.link?`<a href="${e.link}" target="_blank" rel="noopener">아로리에서 원자료 보기 →</a>`:""}
+    ${e.link?`<a href="${e.link}" target="_blank" rel="noopener">${e.org==="arori"?"아로리에서 원자료 보기 →":"원자료 보기 →"}</a>`:""}
   </div>`;
 }
 function meter(v){ // -2..2 -> 5칸
@@ -682,7 +690,7 @@ function renderIntro(){
   $("#app").innerHTML = `
   <div class="card">
     <h2>내신이 잘 나오는 과목을 고르면, 정말 이득일까?</h2>
-    <p class="lead">곧 2·3학년 과목을 선택합니다. 이 연습에서는 실제로 마주칠 법한 딜레마 다섯 가지를 직접 결정해 봅니다.
+    <p class="lead">곧 2·3학년 과목을 선택합니다. 이 연습에서는 실제로 마주칠 법한 딜레마 네 가지를 직접 결정해 봅니다.
     선택할 때마다 두 개의 눈으로 결과를 비교합니다.</p>
     <div class="eyes">
       <div class="eye calc"><h4>내신 계산기의 눈</h4><p>1등급 자리가 몇 개인지, 등급 평균이 오를지만 봅니다.</p></div>
@@ -818,8 +826,8 @@ function renderReport(){
     </div>
   </div>`;
   $("#again").onclick=()=>{S={persona:null,i:0,picks:[],reason:""};save();renderIntro();};
-  $("#print").onclick=()=>{document.querySelectorAll("section.view").forEach(s=>s.classList.remove("print-on"));$("#v-play").classList.add("print-on");window.print();};
-  $("#toProof").onclick=()=>show("proof");
+  $("#print").onclick=()=>{document.querySelectorAll("section.view").forEach(s=>s.classList.remove("print-on"));$("#v-grade").classList.add("print-on");window.print();};
+  $("#toProof").onclick=()=>show("evidence","proof");
   $("#back2").onclick=renderReason;
 }
 
@@ -858,7 +866,7 @@ function renderLib(k){
   document.querySelectorAll("#libTabs button").forEach(b=>b.classList.toggle("on",b.dataset.k===k));
   let html="";
   if(k==="snu") html=`<p class="small">${DOC.snu}</p>`+["S1","S2","S3","S4","S5","S6","S7","S8","S9","S10","S11","S12","S13"].map(evCard).join("");
-  if(k==="dgu") html=`<p class="small">${DOC.dgu}</p>`+["D1","D2","D3","D4","D5","D6","D7","D8","D9","D10","D11","D12"].map(evCard).join("")+aroriLikeTable();
+  if(k==="dgu") html=`<p class="small">${DOC.dgu}</p>`+["D1","D2","D3","D4","D5","D6","D7","D8","D9","D10","D11","D12","DS1","DS2","DS3","DS4","DS5","DS6","DC1","DC2","DC3","DC4","DH1","DH2","DH3"].map(evCard).join("")+aroriLikeTable();
   if(k==="arori") html=`
     <p>서울대 아로리의 ‘나도 입학사정관’은 실제 합격생의 학교생활기록부 일부를 공개하고 독자가 직접 평가해 보게 하는 코너입니다. 아래는 그중 과목 선택을 살펴보기 좋은 기록 4건입니다.
     <b>아로리는 개별 평가 해설을 공개하지 않으므로</b>, 아래 기록은 ‘해설’이 아니라 ‘관찰 자료’로 활용하세요.</p>
@@ -868,8 +876,8 @@ function renderLib(k){
     ② 공학·자연 계열 합격자 세 명이 공통으로 이수한 ‘Ⅱ’ 과목은 무엇인가요?<br>
     ③ 경영대학 합격자의 사회 과목 11개 중, 여러분 학교에서 인원이 적을 것 같은 과목은 무엇인가요?</div>
     <p><a href="${ARORI}" target="_blank" rel="noopener">아로리 ‘나도 입학사정관’ 전체 사례 보기 →</a> (2014~2026학년도, 학과별 3명씩)</p>`;
-  if(k==="etc") html=`<p class="small">${DOC.skku}</p>${evCard("K1")}${evCard("K2")}<p class="small" style="margin-top:14px">교육부·교육청 자료</p>${evCard("M1")}${evCard("B1")}${evCard("G1")}
-    <div class="note">성균관대 자료는 학교에서 받은 ‘설명회 요약본’이므로 성균관대가 직접 펴낸 공식 문서와는 표현이 다를 수 있습니다.</div>`;
+  if(k==="att") html=["KH1","KH2","KH3","KH4","KH5","KH6","CAU1","CAU2","K1","K2"].map(evCard).join("")+`<div class="note">경희대 영상 부분은 영상을 보고 선생님이 정리한 내용이고, 성균관대 자료는 설명회 요약본입니다. 각 대학의 실제 반영 방식은 모집요강을 확인하세요.</div>`;
+  if(k==="moe") html=["M1","B1","G1","G2","MOE2"].map(evCard).join("");
   $("#libBox").innerHTML=html;
 }
 function aroriLikeTable(){ return `<div class="case"><h4>표로 보기: 동국대 열린전공학부(자연) 2026학년도 과목별 이수 비율(%)</h4>
@@ -884,50 +892,9 @@ function aroriLikeTable(){ return `<div class="case"><h4>표로 보기: 동국�
   <tr><td>지구과학Ⅱ</td><td>20.8</td><td>16.0</td><td>16.0</td></tr></table>
   <p class="small">출처: ${DOC.dgu} 45쪽</p></div>`; }
 
-/* 출결 */
-function renderAttend(){
-  $("#attendBox").innerHTML = `
-  <div class="card">
-    <h2>출결, 대학은 어떻게 볼까?</h2>
-    <p class="lead">“질병 결석이면 괜찮다”는 말, 절반만 맞습니다. 대학 자료와 영상을 함께 보며 확인해 봅시다.</p>
-    <h3>영상으로 먼저 보기</h3>
-    <div class="video"><iframe src="https://www.youtube-nocookie.com/embed/${VIDEO_ID}" title="출결에 대한 대학의 관점" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>
-    <p class="small">영상이 열리지 않으면 <a href="https://youtu.be/${VIDEO_ID}" target="_blank" rel="noopener">유튜브에서 보기</a></p>
-    ${VIDEO_SUMMARY.length?`<div class="situation"><b>영상 핵심 정리</b><ul>${VIDEO_SUMMARY.map(s=>`<li>${esc(s)}</li>`).join("")}</ul></div>`:""}
-    <div class="situation"><b>영상을 보며 적어 보기</b><br>① 대학이 출결 기록을 보고 알고 싶어 하는 것은 무엇인가요?<br>② ‘질병’ 결석과 ‘미인정’ 결석은 어떻게 다르게 읽히나요?<br>③ 정말 아플 때는 어떻게 해야 하나요?</div>
-    <textarea placeholder="영상을 보고 알게 된 점을 한 줄로 적어 보세요."></textarea>
-  </div>
-  <div class="card">
-    <h2>데이터로 보기: 성균관대 경영학과 학종 지원자</h2>
-    <div class="stat">
-      <div><span>전체 지원자 개근</span><b>33.8%</b></div>
-      <div><span>전체 지원자 1회 이상 결석</span><b>66.2%</b></div>
-      <div><span>합격자 1회 이상 결석</span><b>57.3%</b></div>
-      <div><span>전체 지원자 평균 결석</span><b>5.5회</b></div>
-    </div>
-    <p>합격자 집단은 개근 비율이 <b>훨씬 높고</b>, 미인정 결석은 <b>극소수</b>, 평균 결석 횟수는 <b>대폭 감소</b>했습니다.</p>
-    ${evCard("K1")}${evCard("K2")}
-  </div>
-  <div class="card">
-    <h2>가이드북으로 보기: 동국대</h2>
-    ${evCard("D10")}
-    <div class="note">동국대 가이드북 70~71쪽의 에너지신소재공학과 비교 사례에서 출결은 최초합격자(상위 1%) 개근, 충원합격자 질병지각 3회, 1단계 불합격자 미인정지각 2회였습니다. 이 사례의 결과는 교과 성취와 전공 관심도 등 여러 요소가 함께 작용한 것으로, 출결만으로 결과가 갈렸다고 볼 수는 없습니다. 다만 상위 평가를 받은 학생일수록 출결 기록도 깨끗했다는 점은 눈여겨볼 만합니다.</div>
-    <h3>이런 면접 질문을 받을 수 있습니다 (동국대 49쪽 예시 문항)</h3>
-    <ul class="iq"><li>미인정 결석, 지각, 조퇴가 잦은 이유에 대해 구체적으로 설명해 주실 수 있나요? 또한 이러한 상황이 대학교 진학 후 학업 수행에 어려움을 줄 가능성은 없는지 말씀해 주세요.</li><li>2학년 때 질병 지각이 7번 있었습니다. 이에 대한 구체적인 이유를 설명해 주세요.</li></ul>
-  </div>
-  <div class="card">
-    <h2>정리: 출결 세 가지 원칙</h2>
-    <ol>
-      <li><b>정말 아플 때는 쉰다.</b> 질병처럼 타당한 사유가 있는 결석은 크게 부정적으로 작용하지 않습니다. 증빙을 챙기고, 장기 결석이라면 담임 선생님과 상의해 사유가 기록되게 합니다.</li>
-      <li><b>‘효율’을 위한 질병 처리는 하지 않는다.</b> 시험공부·학원 때문에 반복되는 질병 조퇴는 기록에 패턴으로 남고, 성실성 평가에서 불리할 수 있습니다.</li>
-      <li><b>미인정은 만들지 않는다.</b> 특별한 사유 없는 결석·지각은 학교생활 충실도와 성실성에서 부정적 요인이 될 수 있습니다.</li>
-    </ol>
-  </div>`;
-}
-
 /* 교사용 자료 목록 */
 function renderSrc(){
-  $("#srcList").innerHTML = [DOC.snu, DOC.dgu, `${DOC.arori} (${ARORI})`, DOC.skku, DOC.moe, DOC.goe, DOC.pen, `유튜브 영상 (https://youtu.be/${VIDEO_ID})`].map(s=>`<li>${esc(s)}</li>`).join("");
+  $("#srcList").innerHTML = [DOC.snu, DOC.dgu, `${DOC.arori} (${ARORI})`, DOC.skku, DOC.moe, DOC.goe, DOC.pen, "교육부 「학교생활기록부 기재요령」·학교생활기록부 종합지원포털", "경희대·중앙대 출결 관련 언론 보도(이데일리·대학저널·한국대학신문·내일교육·내일신문·매일신문, 2026)", `유튜브 영상 (https://youtu.be/${VIDEO_ID})`].map(s=>`<li>${esc(s)}</li>`).join("");
 }
 
 
@@ -1079,28 +1046,362 @@ function showCmp(k){
     </div>`;
   $("#cmpRedo").onclick=()=>{delete RV[k];showCmp(k);};
   const n=$("#cmpNext"); if(n) n.onclick=()=>{showCmp(k+1);window.scrollTo({top:0,behavior:"smooth"});};
-  const e=$("#cmpEnd"); if(e) e.onclick=()=>show("proof");
+  const e=$("#cmpEnd"); if(e) e.onclick=()=>show("evidence","proof");
+}
+
+
+/* =========================================================
+   5. 학생부 항목별 섹션 (세특·출결·창체·행특) — v5
+   ========================================================= */
+const YT="https://youtu.be/TU2RqmlGEqE";
+Object.assign(EV,{
+  /* 동국대 세특·창체·행특 */
+  DS1:{org:"dgu",page:"61쪽 Q1",title:"세특은 ‘그 과목’과의 연관성이 먼저다",
+      quote:"이 영역은 무엇보다도 해당 과목과의 연관성을 중심으로 나타나는 것이 바람직합니다",
+      body:"세특은 각 교과 교사가 수업 참여도·성실성·적극성·성취도를 관찰한 다면평가 결과이며, 해당 과목에 적극적으로 참여하며 형성되는 자기주도적 학습 과정과 성장 모습을 확인하는 영역이라고 설명합니다."},
+  DS2:{org:"dgu",page:"61쪽 Q2",title:"진로 내용을 억지로 끼워 넣지 말 것",
+      quote:"",
+      body:"주제 선택에서 관심 분야를 드러낼 수는 있지만, 진로 관심을 지나치게 강조해 해당 과목의 학업역량을 확인하기 어려워지면 안 된다고 말합니다. 전공과 연관성이 낮은 과목에서 무리하게 진로 주제를 고르기보다 전공과 연관된 교과에서 자연스럽게 관심을 드러내라고 권합니다."},
+  DS3:{org:"dgu",page:"61쪽 Q3",title:"수행평가는 과정이 기록되는 기회",
+      quote:"",
+      body:"수행평가는 정답뿐 아니라 생각하는 과정, 표현 방식, 문제를 해결하는 태도까지 평가하며, 준비 과정과 수행 과정 전체가 반영된다고 설명합니다. 질문하고 피드백을 반영해 개선하는 모습이 세특으로 자연스럽게 이어진다고 안내합니다."},
+  DS4:{org:"dgu",page:"63쪽 사례6",title:"아쉬운 사례: 해당 교과의 역량을 확인할 수 없는 세특",
+      quote:"",
+      body:"영어Ⅱ 세특에 디지털 헬스케어와 의료 로봇에 대한 분석이 길게 적혀 있지만, 동국대는 관심 분야는 확인되나 해당 교과와 관련된 학습 태도나 성취 수준을 살펴보기에는 한계가 있는 사례라고 해설합니다."},
+  DS5:{org:"dgu",page:"63쪽 사례7",title:"아쉬운 사례: 고등학교 수준에서 벗어난 세특",
+      quote:"",
+      body:"미적분 세특에 손실함수·경사하강법·푸리에 해석·라그랑주 승수법 등이 적힌 사례에 대해, 동국대는 고등학교 수준을 벗어난 탐구 내용은 평가에 반영되기 어렵고, 면접에서 충분히 설명하지 못하면 오히려 불리하게 작용할 수 있다고 해설합니다."},
+  DS6:{org:"dgu",page:"62쪽 사례1·4",title:"긍정 사례: 수업 안에서 드러난 역량",
+      quote:"",
+      body:"영어Ⅰ 사례(정치외교학전공)는 교과부장으로서 친구들의 학습을 돕고, 영어 글을 분석해 수업 실연에 참여한 모습으로 기초학업역량·전공관심도·역할의 주도성이 함께 확인된다고 해설합니다. 수학Ⅰ 사례(수학교육과)는 교과서의 증명을 스스로 따라가고 사인함수를 변형해 그래프 프로젝트를 수행한 모습으로 전공수학역량과 협업소통능력이 드러난다고 봅니다."},
+  DC1:{org:"dgu",page:"50~51쪽",title:"자율활동: 참여 사실보다 그 안의 변화",
+      quote:"단순히 활동 참여 사실 자체보다는 그 활동을 통해 학생이 어떤 발전을 이루었는지를 중심으로",
+      body:"활동 계기, 맡은 역할, 겪은 어려움과 해결 방법, 활동 후의 생각 변화를 보여 주는 것이 중요하며, 임원 여부보다 맡은 역할을 얼마나 책임감 있게 수행했는지가 더 중요하다고 설명합니다. 교육 내용을 단순 나열한 기록은 학생의 성찰과 변화를 확인하기 어려운 ‘아쉬운 사례’로 제시합니다."},
+  DC2:{org:"dgu",page:"52~53쪽",title:"동아리활동: 동아리 이름보다 그 안의 역량",
+      quote:"",
+      body:"동아리명과 학과명이 일치하더라도 전공적합성과 역량을 확인할 수 없다면 긍정적 평가를 받기 어렵고, 직접 관련이 없더라도 전공에 필요한 역량을 기르는 활동이었다면 긍정적으로 평가될 수 있다고 설명합니다. 책을 읽고 느낀 점만 적힌 기록은 활동 과정과 성장을 확인하기 어려운 사례로 제시됩니다."},
+  DC3:{org:"dgu",page:"54~55쪽",title:"봉사활동: 시간보다 지속성과 자발성",
+      quote:"",
+      body:"봉사 시간의 많고 적음보다 방향성·지속성·자발성·적극성을 고려해 진정성을 파악한다고 밝힙니다. 3년간 꾸준한 또래 멘토링은 긍정 사례로, 학급·전체 단위로 참여한 1시간짜리 환경보호 활동의 반복은 자발적 의지가 드러난 활동으로 보기 어려운 사례로 제시합니다."},
+  DC4:{org:"dgu",page:"56~57쪽",title:"진로활동: 무엇을 했는지보다 어떻게 고민했는지",
+      quote:"",
+      body:"활동의 개수나 학과 관련성보다 어떤 동기로 시작했고 그 과정에서 어떤 선택과 노력을 했는지가 중요하며, 모든 학생이 참여하는 공통 프로그램만으로는 좋은 평가를 받기 어렵다고 설명합니다. 진로가 바뀐 경우에도 그 계기와 탐색 노력이 진정성 있게 드러나면 오히려 깊이 있는 탐색 역량으로 평가받을 수 있다고 답합니다."},
+  DH1:{org:"dgu",page:"64쪽 Q1",title:"행특: 한 활동의 성과보다 일관된 태도",
+      quote:"학교생활 전반에서 일관되게 보여준 태도와 행동이 중요하게 평가됩니다",
+      body:"수업 참여 태도, 책임감, 성실성, 규칙 준수, 또래·교사와의 관계, 공동체 의식 등 학생의 전반적인 행동 양상이 종합되어 판단되며, 학생부위주전형의 모든 평가 요소에 폭넓게 반영될 수 있다고 설명합니다."},
+  DH2:{org:"dgu",page:"64쪽 Q2",title:"행특에 전공 이야기가 없어도 괜찮다",
+      quote:"",
+      body:"행특에 전공 관련 관심이나 뚜렷한 성장이 반드시 드러나야 하는 것은 아니며, 수업에 임하는 자세, 규칙을 지키는 모습, 친구·교사와의 관계, 책임감과 성실성 등 일상적인 학교생활이 충실히 담겨 있다면 그 자체로 충분히 평가 대상이 된다고 답합니다."},
+  DH3:{org:"dgu",page:"65쪽 면접준비",title:"면접위원은 행특의 근거를 묻는다",
+      quote:"",
+      body:"면접위원은 담임 선생님이 구체적으로 어떤 모습을 보고 그런 평가를 내렸을지 그 근거를 면접에서 확인하려 하므로, 관련 질문을 받으면 구체적인 경험을 제시하는 것이 좋다고 안내합니다."},
+  G2:{org:"moe",src:"교육부(2022), 「2022 개정 교육과정 총론」",page:"창의적 체험활동",title:"2022 개정 교육과정의 창의적 체험활동",
+      quote:"",
+      body:"2022 개정 교육과정에서 창의적 체험활동은 자율·자치활동, 동아리활동, 진로활동의 세 영역으로 운영됩니다. 봉사활동은 별도 영역이 아니라 각 영역과 연계해 운영되므로, 기록 방식은 학교 안내를 함께 확인하세요."},
+
+  /* 출결: 경희대 */
+  KH1:{org:"khu",src:"경희대학교 입학처 관계자 출연 유튜브 영상(선생님 정리)",page:"",title:"개근은 귀하다, 그러나 미인정 지각 1회로 낙인찍지는 않는다",
+      link:YT,quote:"",
+      body:"개근 학생 자체가 귀해졌다고 말합니다. 반면 미인정 지각이 1회 있다는 이유만으로 불량한 학생으로 보는 것은 타당하지 않다고 설명합니다."},
+  KH2:{org:"khu",src:"경희대학교 입학처 관계자 출연 유튜브 영상(선생님 정리)",page:"",title:"미인정 결과·조퇴는 지각보다 엄하게 본다",
+      link:YT,quote:"",
+      body:"미인정 결과와 조퇴는 학생의 의지가 반영된 수업 결손 행위이므로 미인정 지각보다 엄한 평가가 필요하다는 입장입니다."},
+  KH3:{org:"khu",src:"경희대학교 입학처 관계자 출연 유튜브 영상(선생님 정리)",page:"",title:"질병 출결: 사유가 기록되면 큰 불이익은 없다",
+      link:YT,quote:"",
+      body:"질병 지각·조퇴가 예전보다 확실히 많아졌다고 진단합니다. 다리 수술로 질병지각이 10회 있었더라도 특별한 사유가 기록된 경우에는 큰 불이익이 없다고 설명합니다. 그러나 특별한 사유가 없는 질병 출결은 입학사정관에게 성실성에 대한 의심을 갖게 하며, 질병으로 인한 출결이 여러 번이면 분명히 수업 결손이 있는 것이라고 말합니다."},
+  KH4:{org:"khu",src:"경희대학교 입학처 관계자 출연 유튜브 영상(선생님 정리)",page:"",title:"경희대의 입장: 출결은 최소한의 본분",
+      link:YT,quote:"",
+      body:"출결은 성실성과 규칙 준수를 확인할 수 있는 지표이자 학생의 신분에서 지켜야 하는 최소한의 본분이라고 봅니다. 3년 개근 학생에게는 일부 가산점을 부여하며, 사유가 질병이라도 빈도가 높으면 긍정적인 평가를 받기 어렵다는 입장입니다. 내신과 수능의 변별력이 약해지면서 출결을 평가에 반영해야 한다는 의견이 늘고 있다고도 전합니다."},
+  KH5:{org:"khu",src:"언론 보도(내일교육 경희대 입학처 인터뷰, 2026.7. · 매일신문, 2026.8.)",page:"",title:"경희대: 미인정 지각·조퇴·결과 2회 = 미인정 결석 1일",
+      quote:"",
+      body:"보도에 따르면 경희대는 2027학년도 수시부터 출결을 정량평가하는 전형에서 미인정 지각·조퇴·결과 2회를 미인정 결석 1일로 환산해 반영합니다. 같은 보도는 서강대·경희대 등에서 미인정 출결 관리를 강화하는 움직임이 나타나고 있다고 전합니다."},
+  KH6:{org:"khu",src:"언론 보도(내일신문, 2026.7.6. 보성고 주요 대학 설명회 정리)",page:"",title:"경희대 2028 정시: 출결 반영 전형 신설, 개근 가점",
+      quote:"",
+      body:"설명회 정리 기사에 따르면 경희대는 2028학년도 정시에서 수능 100% 전형 외에 학생부 교과와 비교과(출결·봉사)를 10% 반영하는 ‘수능 학생부형’을 신설하며, 개근 학생에게 가점을 준다고 안내했습니다."},
+  /* 출결: 중앙대 */
+  CAU1:{org:"cau",src:"중앙대학교 2028학년도 입학전형 시행계획 발표(2026.4.9.) 관련 보도(이데일리·대학저널·한국대학신문)",page:"",title:"중앙대: 모든 전형의 동점자 처리 최종 단계는 ‘개근 학생’",
+      quote:"",
+      body:"중앙대는 2028학년도 대학입학전형 시행계획에서 모든 전형의 동점자 처리 최종 단계에 ‘개근 학생’ 선발 기준을 적용한다고 밝혔습니다. 같은 해 6월 공개된 수정본에서도 동점자 처리 시 개근 학생 우선 원칙은 유지되었습니다(교육을 비추다, 2026.6.)."},
+  CAU2:{org:"cau",src:"한국대학신문(2026.4.9.) 중앙대 입학설명회 보도",page:"",title:"중앙대 입학사정관: “질병 결석이 급격히 늘었다”",
+      quote:"",
+      body:"중앙대 입학사정관은 최근 몇 년 사이 질병 결석이 급격히 늘어나는 등 출결 지표가 악화되고 있다며 개근의 가치를 입시에서 제대로 평가받게 하겠다고 설명했습니다. 보도는 1인당 질병 결석 일수가 3년 전보다 2배 가까이 늘었다고 전합니다."},
+  /* 교육부 규정 */
+  MOE2:{org:"moe",src:"교육부 「학교생활기록부 기재요령」·학교생활기록부 종합지원포털 기재 문의 답변",page:"출결",title:"감염병은 출석인정, 질병 결석은 증빙이 필요하다",
+      quote:"",
+      body:"법정 감염병 등으로 출석하지 못한 경우는 출석으로 인정되며, 교육부는 인플루엔자(독감) 확진이나 확진 검사로 인한 결석도 이에 해당한다고 안내했습니다. 질병으로 인한 결석은 결석한 날부터 5일 이내에 진단서·의사 소견서·진료 확인서 등을 첨부한 결석계를 제출해 학교장의 승인을 받아야 합니다. 세부 처리는 학교와 시·도교육청 안내를 따릅니다."}
+});
+
+/* 출결 딜레마 */
+const ATT=[
+ {title:"기말고사 사흘 전, 조퇴하고 집에서 공부할까?",
+  situation:"2학년 기말고사가 사흘 남았습니다. 컨디션이 조금 안 좋습니다. 친구는 “병원 들렀다가 질병 조퇴하면 생기부에 문제없대. 집에서 공부하는 게 훨씬 효율적이야”라고 합니다. 이번 학기에 비슷한 이유로 이미 두 번 조퇴했습니다.",
+  options:[
+   {label:"질병 조퇴하고 집에서 시험공부",desc:"질병 처리하면 괜찮다고 하니까.",eff:1,hak:-2,v:"risky",
+    calc:"시험 직전 공부 시간을 몇 시간 더 확보할 수 있습니다.",
+    adm:"경희대 입학처는 특별한 사유가 없는 질병 출결은 성실성에 대한 의심을 갖게 하고, 사유가 질병이라도 빈도가 높으면 긍정적인 평가를 받기 어렵다고 말합니다. 성균관대 설명회 자료도 습관적인 질병 조퇴는 성실성 평가에서 감점 요인이라고 했습니다. 시험 때마다 반복되는 조퇴는 기록에 ‘패턴’으로 남습니다.",
+    ev:["KH3","KH4","K1"],iq:"2학년 때 시험 기간마다 질병 조퇴가 있었는데, 구체적인 이유를 설명해 주세요."},
+   {label:"수업을 끝까지 듣고 저녁에 공부",desc:"컨디션을 조절하며 일상을 지킨다.",eff:0,hak:2,v:"good",
+    calc:"공부 시간은 조금 줄지만, 오늘 수업 내용이 곧 시험 범위입니다.",
+    adm:"경희대는 출결을 성실성과 규칙 준수를 확인하는 지표이자 학생으로서 지켜야 할 최소한의 본분으로 봅니다. 동국대도 출결을 성실성을 보여 주는 가장 기본적인 요소라고 설명합니다. 단, 정말 아프다면 무리하지 말고 쉬어야 합니다(딜레마 2·4 참고).",
+    ev:["KH4","D10"],iq:"3년 동안 학교생활의 성실성을 지키기 위해 스스로 세운 원칙이 있나요?"},
+   {label:"조퇴는 말고, 내일 아침 1교시만 늦게 가자",desc:"잠을 더 자고 공부하면 효율이 더 좋다.",eff:0,hak:-1,v:"risky",
+    calc:"수면 시간을 조금 더 확보할 수 있습니다.",
+    adm:"경희대는 미인정 지각 1회로 불량한 학생이라고 보지는 않는다고 말합니다. 그러나 보도에 따르면 경희대는 2027학년도 수시 정량평가에서 미인정 지각·조퇴·결과 2회를 미인정 결석 1일로 환산합니다. ‘한 번쯤’이 쌓이면 숫자가 됩니다.",
+    ev:["KH1","KH5","D10"],iq:"미인정 지각이 있는데, 그 이유와 이후 어떻게 생활을 바꾸었는지 말해 주세요."}
+  ]},
+ {title:"다리 수술 뒤 통원 치료, 지각이 계속 생겨요",
+  situation:"다리 수술을 받은 뒤 3주 동안 아침마다 병원 통원 치료를 받아야 합니다. 그 기간 동안 지각이 10번 정도 생길 것 같습니다. 개근이 깨지는 것이 속상합니다.",
+  options:[
+   {label:"증빙 서류를 제때 내고, 담임 선생님께 사정을 알린다",desc:"질병 사유가 학교생활기록부에 분명히 남도록 한다.",eff:0,hak:2,v:"good",
+    calc:"서류를 챙기는 수고가 듭니다.",
+    adm:"경희대 입학처는 다리 수술로 질병지각이 10회 있었더라도 특별한 사유가 기록된 경우에는 큰 불이익이 없다고 설명합니다. 성균관대 설명회 자료도 질병 결석은 사유를 담임 선생님 종합의견에 명시하도록 권장했습니다. 질병 처리를 받으려면 기한 안에 증빙을 첨부해 학교장의 승인을 받아야 합니다.",
+    ev:["KH3","K2","MOE2"],iq:"2학년 때 질병지각이 많았는데, 그 기간에 수업 결손을 어떻게 보충했나요?"},
+   {label:"질병이니 알아서 처리되겠지, 그냥 둔다",desc:"서류는 귀찮으니 나중에.",eff:1,hak:-2,v:"risky",
+    calc:"당장은 신경 쓸 일이 없습니다.",
+    adm:"질병으로 인한 지각·결석도 증빙과 학교장 승인이 있어야 ‘질병’으로 처리됩니다. 증빙이 없으면 사유가 분명하지 않은 기록으로 남을 수 있습니다. 경희대는 특별한 사유가 없는 질병 출결은 성실성에 대한 의심을 갖게 한다고 말합니다.",
+    ev:["MOE2","KH3"],iq:"질병지각이 10회 있는데 특기사항에 사유가 없습니다. 어떤 사정이 있었나요?"},
+   {label:"통증을 참고 무리해서라도 정시에 등교한다",desc:"개근을 지키는 게 무엇보다 중요하다.",eff:0,hak:0,v:"mixed",
+    calc:"개근은 지킬 수 있을지 모르지만, 회복이 늦어질 수 있습니다.",
+    adm:"성실함을 지키려는 마음은 귀합니다. 하지만 대학도 사유가 분명히 기록된 질병 출결은 크게 불리하게 보지 않습니다. 건강을 해치면서까지 개근을 지킬 필요는 없습니다. 치료가 먼저이고, 사유를 정확히 기록하는 것이 올바른 방법입니다.",
+    ev:["KH3","D10"],iq:"학교생활 중 어려움이 있었을 때 어떻게 극복했나요?"}
+  ]},
+ {title:"1교시에 늦었다. 어차피 미인정인데, 3교시는 자습실에서?",
+  situation:"늦잠을 자서 1교시에 미인정 지각을 했습니다. 기분이 상했고, 3교시 수업은 별로 중요하지 않은 것 같습니다. 친구가 “어차피 오늘 기록 하나 생겼으니 3교시는 빠지고 자습실에서 수능 공부하자”고 합니다.",
+  options:[
+   {label:"3교시는 빠지고 자습실에서 공부한다",desc:"어차피 하루 망쳤으니 효율이라도 챙기자.",eff:1,hak:-2,v:"risky",
+    calc:"수능 공부 시간을 한 시간 더 확보합니다.",
+    adm:"수업에 들어가지 않으면 ‘결과’로 기록됩니다. 경희대 입학처는 미인정 결과와 조퇴를 학생의 의지가 반영된 수업 결손 행위로 보고, 미인정 지각보다 엄하게 평가해야 한다고 말합니다. 보도에 따르면 경희대 정량평가에서는 미인정 지각·조퇴·결과 2회가 미인정 결석 1일로 환산됩니다. 오늘 하루에 그 2회가 채워집니다.",
+    ev:["KH2","KH5","D10"],iq:"같은 날 미인정 지각과 미인정 결과가 함께 있는데, 무슨 일이 있었나요?"},
+   {label:"지각은 반성하고, 남은 수업은 모두 듣는다",desc:"실수는 한 번으로 끝낸다.",eff:0,hak:2,v:"good",
+    calc:"자습 시간은 늘지 않습니다.",
+    adm:"경희대는 미인정 지각 1회가 있다는 이유로 불량한 학생으로 보는 것은 타당하지 않다고 말합니다. 한 번의 실수보다 중요한 것은 그 뒤의 태도입니다. 같은 실수가 반복되지 않으면 기록은 ‘한 번의 실수’로 남습니다.",
+    ev:["KH1","KH4"],iq:"미인정 지각이 한 번 있는데, 그 일 이후 생활 습관을 어떻게 바꾸었나요?"},
+   {label:"아예 조퇴하고 집에 간다",desc:"기분이 안 좋으니 오늘은 쉬자.",eff:0,hak:-2,v:"risky",
+    calc:"남은 시간을 쉬거나 집에서 공부할 수 있습니다.",
+    adm:"사유 없는 조퇴는 미인정 조퇴로 기록됩니다. 경희대는 조퇴도 학생의 의지가 반영된 수업 결손으로 보고 지각보다 엄하게 평가해야 한다고 말하며, 동국대도 특별한 사유 없는 반복적 결석과 다수의 미인정은 성실성 면에서 부정적 요인이 될 수 있다고 밝힙니다.",
+    ev:["KH2","D10"],iq:"미인정 조퇴가 있는데, 그날 어떤 일이 있었나요?"}
+  ]},
+ {title:"독감 확진! 개근을 지키려면 등교해야 할까?",
+  situation:"2학년 11월, 독감 진단을 받았습니다. 지금까지 개근이라 결석하면 아깝다는 생각이 듭니다. 중앙대는 동점자 처리 마지막 단계에서 개근 학생을 선발한다고 들었습니다.",
+  options:[
+   {label:"진단서를 받고 학교에 알린 뒤 집에서 회복한다",desc:"규정에 따라 처리한다.",eff:0,hak:2,v:"good",
+    calc:"며칠 동안 수업을 듣지 못합니다.",
+    adm:"교육부는 인플루엔자 확진이나 확진 검사로 결석하는 경우 출석으로 인정할 수 있다고 안내했습니다. 법정 감염병 등으로 출석하지 못한 경우는 출석인정 결석이므로 결석 일수에 포함되지 않습니다. 증빙 서류와 세부 처리 방법은 학교 안내를 따르세요.",
+    ev:["MOE2"],iq:"결석했던 기간의 학습 공백을 어떻게 메웠나요?"},
+   {label:"열이 나도 마스크 쓰고 등교한다",desc:"개근이 깨지는 건 싫다.",eff:0,hak:-1,v:"risky",
+    calc:"개근은 지킨다고 생각하지만, 사실은 결석해도 출석으로 인정되는 상황입니다.",
+    adm:"감염병은 학교 안 확산을 막기 위해 등교를 중지하고 출석으로 인정하는 경우입니다. 무리한 등교는 친구들에게 감염을 퍼뜨릴 수 있고, 규정을 지키는 것이 오히려 학생의 본분입니다. 개근의 가치는 ‘아파도 나오는 것’이 아니라 ‘지킬 수 있는 날을 성실하게 지킨 것’에 있습니다.",
+    ev:["MOE2","KH4"],iq:"공동체를 위해 규칙을 지킨 경험이 있다면 말해 주세요."},
+   {label:"진단 없이 그냥 하루 쉰다",desc:"병원 가기 귀찮으니 집에서 쉬자.",eff:1,hak:-1,v:"mixed",
+    calc:"병원에 가는 수고는 덜 수 있습니다.",
+    adm:"진단과 증빙이 없으면 출석인정이나 질병 결석으로 처리되지 않을 수 있습니다. 같은 하루를 쉬어도 절차를 지켰는지에 따라 기록이 달라집니다. 중앙대·경희대처럼 개근의 가치를 평가에 반영하는 대학이 늘고 있다는 점도 기억하세요.",
+    ev:["MOE2","CAU1","KH4"],iq:"결석한 날의 사유를 설명해 주세요."}
+  ]}
+];
+let AS={i:0,picks:[]};
+function renderAttend(){
+  const d=ATT[AS.i], j=AS.picks[AS.i];
+  const univ=`
+  <div class="card">
+    <h2>대학은 출결을 이렇게 본다</h2>
+    <div class="subtabs" id="attUniv">
+      <button data-u="khu" class="on">경희대</button><button data-u="cau">중앙대</button><button data-u="skku">성균관대</button><button data-u="dgu">동국대</button><button data-u="moe">교육부 규정</button>
+    </div>
+    <div id="attUnivBox"></div>
+  </div>
+  <div class="card">
+    <h2>생각해 보기</h2>
+    <p>내신 5등급제와 통합형 수능으로 성적의 변별력이 약해지면, 대학은 무엇을 더 보려고 할까요? 경희대 입학처는 출결을 반영해야 한다는 의견이 늘고 있다고 말합니다. 여러분은 출결이 ‘성실성’을 보여 주는 공정한 지표라고 생각하나요?</p>
+    <textarea placeholder="나의 생각을 적어 보세요."></textarea>
+  </div>`;
+  $("#attendBox").innerHTML=`
+  <div class="card">
+    <h2>출결 상황: 대학은 ‘결석 1일’을 어떻게 읽을까?</h2>
+    <p class="lead">출결은 3년 동안 매일 쌓이는 기록입니다. 아래 상황에서 직접 선택해 보고, 대학 입학처가 그 선택을 어떻게 읽는지 근거와 함께 확인하세요.</p>
+    <div class="row" id="attNav" style="gap:6px">${ATT.map((a,k)=>`<button class="chip ${k===AS.i?'on':''} ${AS.picks[k]!=null?'done':''}" data-k="${k}">${k+1}</button>`).join("")}</div>
+  </div>
+  <div class="card">
+    <span class="step-label">출결 딜레마 ${AS.i+1} / ${ATT.length}</span>
+    <h2>${esc(d.title)}</h2>
+    <div class="situation">${esc(d.situation)}</div>
+    <p style="margin:12px 0 0;font-weight:700">여러분이라면 어떻게 하겠습니까?</p>
+    <div class="opts">${d.options.map((o,k)=>`<button class="opt ${j===k?'chosen':''}" data-j="${k}" ${j!=null?'disabled':''}><span class="k">${"ABC"[k]}</span><span class="t"><b>${esc(o.label)}</b><span>${esc(o.desc)}</span></span></button>`).join("")}</div>
+    <div id="attFb"></div>
+  </div>${univ}`;
+  document.querySelectorAll("#attNav .chip").forEach(b=>b.onclick=()=>{AS.i=+b.dataset.k;renderAttend();});
+  document.querySelectorAll("#attendBox .opts .opt").forEach(b=>b.onclick=()=>{AS.picks[AS.i]=+b.dataset.j;renderAttend();});
+  document.querySelectorAll("#attUniv button").forEach(b=>b.onclick=()=>attUniv(b.dataset.u));
+  attUniv("khu");
+  if(j==null) return;
+  const o=d.options[j];
+  const others=d.options.map((x,k)=>k===j?"":`<details><summary>${"ABC"[k]}. ${esc(x.label)} 을(를) 골랐다면?</summary><p><span class="verdict ${x.v}">${VTXT2[x.v]}</span></p><p class="small"><b>당장의 계산:</b> ${esc(x.calc)}</p><p class="small"><b>대학의 눈:</b> ${esc(x.adm)}</p></details>`).join("");
+  $("#attFb").innerHTML=`
+    <div style="margin-top:16px"><span class="verdict ${o.v}">${VTXT2[o.v]}</span></div>
+    <div class="eyes">
+      <div class="eye calc"><h4>당장의 계산</h4>${meter(o.eff)}<p>${esc(o.calc)}</p></div>
+      <div class="eye adm"><h4>대학의 눈</h4>${meter(o.hak)}<p>${esc(o.adm)}</p></div>
+    </div>
+    <h3>근거 확인하기</h3>${o.ev.map(evCard).join("")}
+    <h3>면접에서 이런 질문을 받을 수 있습니다</h3><ul class="iq"><li>${esc(o.iq)}</li></ul>
+    <h3>다른 선택을 했다면?</h3>${others}
+    <div class="row" style="margin-top:14px">
+      <button class="btn ghost" id="attRedo">다시 고르기</button>
+      ${AS.i<ATT.length-1?'<button class="btn" id="attNext">다음 상황 →</button>':'<button class="btn" id="attUnivGo">대학별 입장 정리 보기 ↓</button>'}
+    </div>`;
+  $("#attRedo").onclick=()=>{AS.picks[AS.i]=null;renderAttend();};
+  const n=$("#attNext"); if(n) n.onclick=()=>{AS.i++;renderAttend();window.scrollTo({top:0,behavior:"smooth"});};
+  const g=$("#attUnivGo"); if(g) g.onclick=()=>$("#attUniv").scrollIntoView({behavior:"smooth"});
+}
+const VTXT2={good:"대학이 납득하는 선택",mixed:"상황에 따라 달라지는 선택",risky:"기록에 부담이 되는 선택"};
+function attUniv(u){
+  document.querySelectorAll("#attUniv button").forEach(b=>b.classList.toggle("on",b.dataset.u===u));
+  let h="";
+  if(u==="khu") h=`<div class="video"><iframe src="https://www.youtube-nocookie.com/embed/TU2RqmlGEqE" title="출결에 대한 대학의 관점" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>
+    <p class="small">영상이 열리지 않으면 <a href="${YT}" target="_blank" rel="noopener">유튜브에서 보기</a></p>
+    <h3>질병 출결에 대한 대학의 생각</h3>${["KH1","KH2","KH3"].map(evCard).join("")}
+    <h3>경희대의 입장</h3>${["KH4","KH5","KH6"].map(evCard).join("")}`;
+  if(u==="cau") h=["CAU1","CAU2"].map(evCard).join("")+`<div class="note">동점자 처리 기준은 전형 점수가 같을 때 마지막으로 적용되는 장치입니다. 그만큼 중앙대가 ‘3년 동안 성실하게 등교한 기록’을 최종 판단 기준으로 삼겠다는 뜻으로 읽을 수 있습니다.</div>`;
+  if(u==="skku") h=`<div class="stat">
+      <div><span>경영학과 전체 지원자 개근</span><b>33.8%</b></div>
+      <div><span>전체 지원자 1회 이상 결석</span><b>66.2%</b></div>
+      <div><span>합격자 1회 이상 결석</span><b>57.3%</b></div>
+      <div><span>전체 지원자 평균 결석</span><b>5.5회</b></div></div>
+    <p>합격자 집단은 개근 비율이 <b>훨씬 높고</b>, 미인정 결석은 <b>극소수</b>, 평균 결석 횟수는 <b>대폭 감소</b>했습니다.</p>`+["K1","K2"].map(evCard).join("");
+  if(u==="dgu") h=evCard("D10")+`<h3>이런 면접 질문을 받을 수 있습니다 (동국대 49쪽 예시 문항)</h3>
+    <ul class="iq"><li>미인정 결석, 지각, 조퇴가 잦은 이유에 대해 구체적으로 설명해 주실 수 있나요? 또한 이러한 상황이 대학교 진학 후 학업 수행에 어려움을 줄 가능성은 없는지 말씀해 주세요.</li><li>2학년 때 질병 지각이 7번 있었습니다. 이에 대한 구체적인 이유를 설명해 주세요.</li></ul>
+    <div class="note">동국대 가이드북 70~71쪽 에너지신소재공학과 비교 사례에서 출결은 최초합격자(상위 1%) 개근, 충원합격자 질병지각 3회, 1단계 불합격자 미인정지각 2회였습니다. 결과는 교과 성취와 전공 관심도 등 여러 요소가 함께 작용한 것이므로 출결만으로 갈렸다고 볼 수는 없습니다.</div>`;
+  if(u==="moe") h=evCard("MOE2")+`<h3>정리: 출결 세 가지 원칙</h3><ol>
+      <li><b>정말 아플 때는 쉰다.</b> 증빙을 챙기고, 사유가 기록되도록 담임 선생님과 상의합니다.</li>
+      <li><b>‘효율’을 위한 질병 처리는 하지 않는다.</b> 사유가 불분명한 질병 출결이 반복되면 성실성을 의심받습니다.</li>
+      <li><b>미인정은 만들지 않는다.</b> 특히 결과·조퇴는 지각보다 엄하게 평가될 수 있습니다.</li></ol>`;
+  $("#attUnivBox").innerHTML=h;
+}
+
+/* 기록 비교 엔진 (세특·창체·행특) */
+const RECS={
+ seteuk:{title:"세부능력 및 특기사항: 어떤 기록이 ‘그 과목의 역량’을 보여 줄까?",
+  lead:"세특은 각 과목 선생님이 수업에서 관찰한 내용을 쓰는 기록입니다. 학생이 직접 쓰는 것이 아니라, 수업 시간의 행동이 곧 기록이 됩니다. 동국대 가이드북의 실제 사례 두 쌍을 비교해 보세요.",
+  note:"사례 기록은 동국대 가이드북 62~63쪽에서 옮기되 일부를 줄였습니다(중략 표시).",
+  items:[
+  {title:"같은 영어 시간, 두 개의 세특",q:"영어 교과의 역량이 더 잘 드러나는 기록은 어느 쪽일까요?",
+   A:{label:"기록 A · 영어Ⅱ",text:"통계 자료의 활용에 대한 영어 지문을 읽고 디지털 헬스케어와 개인 건강 관리의 혁신에 대한 통계 자료를 분석하고 영어 보고서를 작성함. 통계 자료를 통해 웨어러블 디바이스, 인공지능 기반 건강 진단 시스템 등 디지털 헬스 시스템이 전체 의료 서비스에서 차지하는 비중이 크게 증가하고 있음을 파악함. (중략) 소프트 마이크로 의료 로봇의 장점과 한계, 플렉서블 전자기기와의 융합 가능성 등을 구체적으로 기술하며 해당 로봇이 의료, 공학, 환경 모니터링 등 다양한 분야에 활용될 수 있는 방법을 예측하고 분석함."},
+   B:{label:"기록 B · 영어Ⅰ",text:"영어 교과부장으로 학습에 어려움을 겪고 있는 친구들을 자발적으로 도와주는 책임감 있는 모습으로 학습 분위기 향상에 크게 기여함. 영어 에세이 쓰기 활동에서 싱가포르의 유명한 관광지를 조사하여 소개하면서 주어진 조건을 충족하고 어법상 오류가 없으며 진정성이 드러나는 글을 완성함. (중략) 영어 글을 읽고 자신이 정리한 바를 바탕으로 학생들에게 어휘 정리, 구문 분석, 꼼꼼한 해석을 제공하며 수업 실연 활동에 적극 참여함."},
+   read:"기록 A는 내용이 화려하지만, 영어를 얼마나 잘 읽고 쓰는지는 거의 보이지 않습니다. 동국대는 이 기록을 ‘관심 분야는 확인되나 해당 교과와 관련된 학습 태도나 성취 수준을 살펴보기에는 한계가 있는 사례’로 제시합니다(열린전공학부 지원자). 기록 B에는 어법상 오류 없는 에세이, 어휘·구문 분석과 해석 등 영어 역량이 구체적으로 드러나고, 교과부장으로서의 책임감도 보입니다.",
+   key:"세특은 ‘그 과목을 얼마나 잘 배웠는가’가 먼저다. 진로 이야기는 그다음이다.",
+   ev:["DS4","DS1","DS2","DS6"],
+   ask:"내가 영어 시간에 한 활동 중, 영어 실력이 드러나는 장면은 무엇인가요?"},
+  {title:"더 어려운 내용을 다루면 더 우수할까?",q:"수학 교과의 학업역량을 더 믿을 수 있게 보여 주는 기록은?",
+   A:{label:"기록 A · 수학Ⅰ",text:"학생들은 시도하지 않는 교과서에 수록된 로그 유도 과정과 수열 공식들의 증명을 통해 학습하는 태도를 지녀 교사의 칭찬을 받음. 교육 분야에 적성이 있는 친구들과 초월함수 그래프를 활용한 시각화 팀 프로젝트를 계획함. (중략) 캐릭터의 굴곡진 몸체 부분을 표현하기 위해 사인함수를 평행이동하고 정의역을 제안함. 특히 세로 부분을 나타내기 위해 사인 그래프를 수직으로 회전시키는 수학적 능력이 인상적임."},
+   B:{label:"기록 B · 미적분",text:"수학 주제 탐구활동에서 인공지능에 활용되는 손실함수, 경사하강법, 시그모이드 함수의 작동 원리를 미적분 개념을 통해 잘 설명함. (중략) 뉴턴과 라이프니츠의 업적을 비교하며 미분방정식, 푸리에 해석, 다변수 최적화, 라그랑주 승수법 등 다양한 수학적 개념이 현실 세계에서 어떻게 적용되는지 구체적으로 탐구함."},
+   read:"기록 B가 훨씬 어려워 보입니다. 그러나 동국대는 이 기록을 ‘고등학교 수준에서 벗어나는 사례’로 들며, 평가에 반영되기 어렵고 면접에서 충분히 설명하지 못하면 오히려 불리할 수 있다고 해설합니다(의료인공지능공학과 지원자). 기록 A는 교과서 수준의 증명을 스스로 따라가고 배운 함수를 변형해 활용한 과정이 보여, 동국대는 전공수학역량과 협업소통능력이 드러나는 긍정 사례로 봅니다(수학교육과 지원자).",
+   key:"어려운 용어의 나열보다 ‘배운 개념을 스스로 증명하고 활용한 과정’이 학업역량을 보여 준다.",
+   ev:["DS5","DS6","DS3"],
+   ask:"면접에서 내 세특의 내용을 모두 설명할 수 있나요? 설명하기 어려운 부분이 있다면 무엇인가요?"}
+ ]},
+ chang:{title:"창의적 체험활동: ‘참여했다’와 ‘성장했다’의 차이",
+  lead:"창의적 체험활동은 자율·자치활동, 동아리활동, 진로활동 등으로 이루어집니다. 같은 활동에 참여해도 기록에 무엇이 남는지는 학생이 그 활동 안에서 무엇을 했느냐에 달려 있습니다.",
+  note:"사례 기록은 동국대 가이드북 50~57쪽에서 옮기되 일부를 줄였습니다. 가이드북 사례는 2015 개정 교육과정 기준(자율·동아리·봉사·진로 4영역)입니다.",
+  items:[
+  {title:"자율활동: 교육을 들은 기록 vs 문제를 해결한 기록",q:"학생 개인의 역할과 역량이 보이는 기록은?",
+   A:{label:"기록 A · 자율활동",text:"학교폭력예방교육(2024.03.04.)을 통해 학교폭력의 위험성을 인지하고 (중략) 학교폭력 신고 방법을 숙지함. 장애 인식 개선 교육(2024.04.19.)을 통해 유니버설 디자인 관련 영상을 시청하고 (중략) 보편적 디자인을 설계함. 정보통신 윤리교육(2025.05.24.)을 통해 인공지능과 저작권의 중요성을 인식하고 저작물의 올바른 사용법에 대한 이해를 높임."},
+   B:{label:"기록 B · 자율활동",text:"여름철 교실 냉방 시 학생별 체감 온도 차이로 발생한 갈등을 공동의 문제로 인식하고, 해결 방안을 주도적으로 제안하며 프로젝트를 기획함. 환경 데이터 수집, 학생 의견 조사, 알고리즘 설계 등 각 단계별 역할을 나누는 과정에서 팀원들의 의견을 적극적으로 수렴하고 조율함. (중략) 구현 과정에서 발생한 코드 오류와 네트워크 문제를 팀원과의 반복적인 토의를 통해 원인을 분석하고 대안을 도출함."},
+   read:"기록 A는 학교가 운영한 교육을 날짜순으로 나열한 것입니다. 동국대는 이를 ‘교육 내용을 단순 나열하는 데 그쳐 학생의 개인적인 성찰과 발전, 실제 변화나 수행을 확인하기 어려운 사례’로 제시합니다. 기록 B는 학급의 실제 문제를 발견하고, 의견을 조율하며, 오류를 함께 해결한 과정이 보여 역할의 주도성과 협업소통능력이 드러나는 긍정 사례입니다.",
+   key:"모두가 들은 교육은 나를 보여 주지 못한다. 내가 발견하고, 맡고, 해결한 것이 기록이 된다.",
+   ev:["DC1","G2"],ask:"우리 반에서 내가 해결해 보고 싶은 ‘공동의 문제’는 무엇인가요?"},
+  {title:"동아리활동: 감상만 남은 기록 vs 탐구가 이어진 기록",q:"활동 과정과 성장이 보이는 기록은?",
+   A:{label:"기록 A · 동아리(현대문학탐구반)",text:"‘노인과바다(어니스트 헤밍웨이)’를 읽고 주인공처럼 나이를 장애물이라 여기지 않는 굳은 의지로 인생을 살아가야겠다는 감상문을 작성함. 고난을 겪고 있는 사람들이 이 책을 읽고 용기와 집념을 두고 삶을 긍정적으로 바라본다면 언젠가는 꿈을 이룰 수 있을 것으로 생각한다는 의견을 제시함."},
+   B:{label:"기록 B · 동아리(경영경제)",text:"뉴스 빅데이터를 활용해 일본 무역 1년 치 통계자료를 분석하고 연관 키워드를 검색하여 특정 월 관련 이슈와 경제 현황을 분석한 시각화 보고서를 작성함. (중략) 이 과정에서 일본의 기차역에서 판매되는 도시락인 에키벤 산업에 관심이 생겨 관련 논문 2편을 읽고 추가 탐구를 진행하는 열정을 보임."},
+   read:"기록 A는 책을 읽고 느낀 점만 적혀 있어 활동 과정을 확인하기 어렵습니다. 동국대는 이 지원자(광고홍보학과)의 전공 관심뿐 아니라 활동을 통한 성장도 확인하기 어렵다고 해설합니다. 기록 B는 자료 분석에서 시작해 새 관심으로 탐구를 확장한 과정이 보여, 탐구역량과 전공 관심이 드러나는 긍정 사례입니다(일본학과 지원자). 동국대는 동아리 이름이 학과명과 같아도 역량이 보이지 않으면 긍정적 평가를 받기 어렵다고 말합니다.",
+   key:"동아리 이름보다 그 안에서 한 ‘과정’이 평가된다.",
+   ev:["DC2"],ask:"내 동아리 활동 중 ‘다음 탐구로 이어진’ 경험이 있나요?"},
+  {title:"봉사활동: 시간이 많은 기록 vs 꾸준한 기록",q:"자발성과 지속성이 더 잘 보이는 기록은?",
+   A:{label:"기록 A · 봉사활동 실적(요약)",text:"1학년: 봉사활동 소양교육 1시간, 플로깅 1시간, 환경보호 활동 1시간 × 4회 / 2학년: 환경보호 활동 1시간 × 4회 / 3학년: 학급 안팎 환경정화 활동 1시간 × 2회"},
+   B:{label:"기록 B · 봉사활동 실적(요약)",text:"1학년: 교내 환경 정화, 또래 멘토링 프로그램(멘토) 15시간·14시간 / 2학년: 또래 멘토링(멘토) 8시간·14시간, 교실·교내 환경정리 / 3학년: 신입생 오리엔테이션 진행 도우미, 또래학습 멘토링, 체육행사 준비, 학생회장단 선거 진행 도우미"},
+   read:"기록 A는 학급이나 전체 학생이 단체로 참여한 1시간짜리 활동의 반복입니다. 동국대는 이를 ‘학생의 자발적 의지와 노력이 드러난 활동으로 보기 어려운 사례’로 제시합니다. 기록 B는 3년 내내 또래 멘토링을 이어 간 흐름이 보여, 봉사의 지속성과 자발성이 드러나는 긍정 사례입니다. 동국대는 봉사 시간의 많고 적음보다 지속성과 자발성을 더 의미 있게 평가한다고 밝힙니다.",
+   key:"봉사는 ‘몇 시간’보다 ‘얼마나 꾸준히, 스스로’가 중요하다.",
+   ev:["DC3","G2"],ask:"3년 동안 꾸준히 이어 갈 수 있는 나눔 활동은 무엇일까요?"},
+  {title:"진로활동: 같은 광고홍보학과 지원자, 두 개의 기록",q:"진로에 대한 고민과 탐구 과정이 보이는 기록은?",
+   A:{label:"기록 A · 진로활동",text:"대입 준비 과정에서 관심있는 전공 및 진로에 맞는 대학과 전형을 구체적으로 탐색함. 광고 관련 책을 읽으며 기초적 이해와 자신의 관심분야에 대한 정보를 습득함. 광고 제작에서 가장 중요한 요소인 창의성과 새로운 관점으로 접근하는 방법 등에 대해 생각함. 유명 기업의 광고 전략을 조사하고, 어떤 점이 대중들에게 어필되었는지 분석하는 시간을 가짐."},
+   B:{label:"기록 B · 진로활동",text:"관심 주제 심화 탐구활동에서 ‘공익광고가 우리 사회에 미치는 영향’을 주제로 탐구를 수행함. 선행연구를 바탕으로 (중략) 취지는 좋았으나 실효성이 나타나지 않은 광고에 대해 개선점을 고찰해 봄. (중략) 광고의 취지와 실제 효과 사이의 괴리를 날카롭게 분석하여, 단순한 정보 전달이 아닌 ‘정서적 유대와 사회적 공감’이 실질적인 행동 변화를 이끌어내는 핵심임을 논리적으로 도출해냄."},
+   read:"두 학생 모두 광고에 관심이 있습니다. 그러나 기록 A는 ‘탐색함·습득함·생각함’으로 끝나 무엇을 알아냈는지가 보이지 않습니다. 동국대는 ‘관심도는 보이나 구체적인 내용과 자신이 기울인 노력 과정, 그로 인해 얻은 배움 등을 확인하기는 어렵다’고 해설합니다. 기록 B는 의문 → 선행연구 → 실효성 없는 광고 분석 → 결론 도출의 과정이 보여 전공관심도와 진로탐색노력을 확인할 수 있는 긍정 사례입니다.",
+   key:"‘관심 있다’가 아니라 ‘무엇을, 어떻게 파고들었나’가 진로 역량이다.",
+   ev:["DC4"],ask:"내 진로활동 기록의 마지막 동사는 무엇인가요? ‘생각함’에서 끝나지 않으려면 무엇이 더 필요할까요?"}
+ ]},
+ haeng:{title:"행동특성 및 종합의견: 담임 선생님이 본 나의 1년",
+  lead:"행동특성 및 종합의견(행특)은 담임 선생님이 1년 동안 관찰한 학생의 모습을 종합해 쓰는 기록입니다. 특정 활동의 성과보다 학교생활 전반에서 일관되게 보여 준 태도가 담깁니다.",
+  note:"기록 B는 동국대 가이드북 64~65쪽 사례에서 옮기되 일부를 줄였습니다. 비교 1의 기록 A는 비교를 위해 만든 예시입니다.",
+  items:[
+  {title:"좋은 말이 많은 기록 vs 행동이 보이는 기록",q:"학생의 모습이 더 구체적으로 보이는 기록은?",
+   A:{label:"기록 A · 비교를 위해 만든 예시",text:"성실하고 책임감이 강하며 교우관계가 원만함. 수업 태도가 바르고 학급 일에 적극적으로 참여함. 밝고 긍정적인 성격으로 주변 친구들에게 좋은 영향을 줌. 앞으로의 발전이 기대되는 학생임."},
+   B:{label:"기록 B · 동국대 사례(의생명공학과)",text:"학급의 반장으로서 최선을 다해 학급을 이끌었으며 반에서 소외되는 학생들이 없도록 힘쓰는 모습이 보임. 생활환경심사에서 교실바닥을 깨끗이 청소하고 급우들에게 역할을 분담하여 학급의 환경정화에 기여하였으며 (중략) 성적향상을 위해 학습계획표를 만들어 실천하며 성취기준표에 체크를 하는 등 학업에 대한 열의가 높으며 미래를 준비하는 분명한 자세를 보임."},
+   read:"기록 A는 좋은 말이 가득하지만, 어떤 장면에서 그런 모습을 보였는지는 알 수 없습니다. 기록 B에는 ‘소외되는 친구가 없도록’, ‘역할을 분담해 환경정화’, ‘학습계획표를 만들어 실천’처럼 행동이 보입니다. 동국대는 행특에서 학교생활 전반의 일관된 태도와 행동을 중요하게 평가하며, 면접위원은 담임 선생님이 어떤 모습을 보고 그렇게 평가했는지 근거를 확인하려 한다고 안내합니다. 행특은 선생님이 쓰지만, 그 재료는 학생의 하루하루입니다.",
+   key:"행특의 재료는 ‘장면’이다. 선생님이 쓸 수 있는 장면을 학교생활에서 만들어야 한다.",
+   ev:["DH1","DH3"],ask:"담임 선생님이 기억할 만한 나의 ‘장면’ 하나를 적어 보세요."},
+  {title:"전공 이야기가 없는 행특은 불리할까?",q:"기록 A에는 전공 이야기가 전혀 없습니다. A는 불리할까요?",
+   votes:[{v:"A",label:"전공 이야기가 없으니 불리하다"},{v:"B",label:"불리하지 않다"}],
+   A:{label:"기록 A · 동국대 사례(지리교육과)",text:"(중략) 주변 친구들이 모르는 것을 물어보면 친절하게 알려주며, 타의 모범이 되는 학생임을 보여줌. 학습에 대한 집중력과 참여도가 높아 모든 과목에서 뛰어난 성취를 나타내고 있으며, 자신의 생각을 글로 표현하는 학습 방법에서 높은 학업능력을 보임. (중략) 시험 기간에는 친구들에게 수행평가 정보를 알려주며 학급에서 멘토 역할을 성실히 해냄."},
+   B:{label:"기록 B · 동국대 사례(미디어커뮤니케이션학전공)",text:"미디어와 언론에 관심이 많아, 학급신문 공약을 스스로 제안하고 학습 행사 관련 기사를 작성, 정기 간행하여, 자신의 관심사에 대한 열정을 공동체 내에서 주도적으로 실천함. (중략) 체험학습 후 우리나라 문화재와 문화를 외국인에게 알릴 수 있는 영상을 제작하여 (중략) 우수한 평가를 받음."},
+   read:"불리하지 않습니다. 동국대는 행특에 전공 관련 관심이나 뚜렷한 성장 과정이 반드시 드러나야 하는 것은 아니며, 수업에 임하는 자세, 친구·교사와의 관계, 책임감과 성실성 등 일상적인 학교생활이 충실히 담겨 있다면 그 자체로 충분히 평가 대상이 된다고 답합니다. 실제로 기록 A는 학습의 주도성을 확인할 수 있는 긍정 사례로, 기록 B는 전공관심도를 확인할 수 있는 긍정 사례로 함께 제시됩니다.",
+   key:"행특은 ‘전공 홍보’의 칸이 아니다. 성실하고 따뜻한 학교생활 그 자체가 평가된다.",
+   ev:["DH2","DH1"],ask:"전공과 상관없이, 내가 학교에서 꾸준히 지켜 온 태도는 무엇인가요?"}
+ ]}
+};
+let RECV={seteuk:{},chang:{},haeng:{}};
+function recBlock(r){ return `<div class="rec"><div class="rec-h">${esc(r.label)}</div><p>${esc(r.text)}</p></div>`; }
+function renderRec(key,k){
+  const D=RECS[key], box=$("#"+key+"Box"); k=k||0;
+  const it=D.items[k], st=RECV[key][k];
+  const votes=it.votes||[{v:"A",label:"기록 A"},{v:"B",label:"기록 B"}];
+  box.innerHTML=`<div class="card">
+    <h2>${esc(D.title)}</h2><p class="lead">${esc(D.lead)}</p><p class="small">※ ${esc(D.note)}</p>
+    <div class="row" style="gap:6px">${D.items.map((x,i)=>`<button class="chip ${i===k?'on':''} ${RECV[key][i]?'done':''}" data-k="${i}">${i+1}</button>`).join("")}</div>
+  </div>
+  <div class="card">
+    <span class="step-label">비교 ${k+1} / ${D.items.length}</span>
+    <h2>${esc(it.title)}</h2><p style="font-weight:700">${esc(it.q)}</p>
+    <div class="grid2">${recBlock(it.A)}${recBlock(it.B)}</div>
+    <div class="opts" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr))">${votes.map(o=>`<button class="opt ${st===o.v?'chosen':''}" data-v="${o.v}" ${st?'disabled':''}><span class="k">${o.v}</span><span class="t"><b>${esc(o.label)}</b></span></button>`).join("")}</div>
+    <div class="recfb"></div>
+  </div>`;
+  box.querySelectorAll(".chip").forEach(b=>b.onclick=()=>renderRec(key,+b.dataset.k));
+  box.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{RECV[key][k]=b.dataset.v;renderRec(key,k);});
+  if(!st) return;
+  box.querySelector(".recfb").innerHTML=`
+    <div class="eye adm" style="margin-top:14px"><h4>대학은 이렇게 읽는다</h4><p>${esc(it.read)}</p></div>
+    <div class="situation" style="margin-top:12px"><b>핵심</b> ${esc(it.key)}</div>
+    <h3>근거 확인하기</h3>${it.ev.map(evCard).join("")}
+    <h3>생각해 보기</h3><p>${esc(it.ask)}</p><textarea placeholder="내 생각을 적어 보세요."></textarea>
+    <div class="row" style="margin-top:14px"><button class="btn ghost rec-redo">다시 판단하기</button>
+    ${k<D.items.length-1?'<button class="btn rec-next">다음 비교 →</button>':''}</div>`;
+  box.querySelector(".rec-redo").onclick=()=>{delete RECV[key][k];renderRec(key,k);};
+  const n=box.querySelector(".rec-next"); if(n) n.onclick=()=>{renderRec(key,k+1);window.scrollTo({top:0,behavior:"smooth"});};
 }
 
 /* 탭 */
-function show(v){
-  document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on",b.dataset.v===v));
+function setSub(g,sname){
+  const nav=document.querySelector(`.secnav[data-g="${g}"]`); if(!nav) return;
+  nav.querySelectorAll("button").forEach(b=>{b.classList.toggle("on",b.dataset.s===sname); const el=$("#sub-"+b.dataset.s); if(el) el.hidden=(b.dataset.s!==sname);});
+}
+function show(v,sub){
+  document.querySelectorAll("#tabs button[data-v]").forEach(b=>b.classList.toggle("on",b.dataset.v===v));
   document.querySelectorAll("section.view").forEach(s=>s.classList.toggle("on",s.id==="v-"+v));
+  if(sub) setSub(v,sub);
   window.scrollTo({top:0});
 }
 document.querySelectorAll("#tabs button[data-v]").forEach(b=>b.onclick=()=>show(b.dataset.v));
+document.querySelectorAll(".secnav").forEach(n=>n.querySelectorAll("button").forEach(b=>b.onclick=()=>setSub(n.dataset.g,b.dataset.s)));
 function resetAll(){
   if(!window.confirm("지금까지의 선택, 투표, 작성한 내용을 모두 지우고 처음부터 시작할까요?")) return;
   try{localStorage.removeItem("course-sim");}catch(e){}
-  S={persona:null,i:0,picks:[],reason:""}; RV={};
-  renderIntro(); renderRead(); renderProof(); renderAttend();
+  S={persona:null,i:0,picks:[],reason:""}; RV={}; AS={i:0,picks:[]}; RECV={seteuk:{},chang:{},haeng:{}};
+  renderIntro(); renderRead(); renderProof(); renderAttend(); renderRec("seteuk"); renderRec("chang"); renderRec("haeng");
   document.querySelectorAll("textarea").forEach(t=>t.value="");
-  show("play");
+  show("grade","play");
 }
 $("#resetAll").onclick=resetAll;
 document.querySelectorAll("#libTabs button").forEach(b=>b.onclick=()=>renderLib(b.dataset.k));
 
-load(); renderIntro(); renderRead(); renderProof(); renderLib("snu"); renderAttend(); renderSrc();
+load(); renderIntro(); renderRead(); renderProof(); renderLib("snu"); renderAttend(); renderRec("seteuk"); renderRec("chang"); renderRec("haeng"); renderSrc();
 </script>
 </body>
 </html>
