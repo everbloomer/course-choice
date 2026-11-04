@@ -23,7 +23,9 @@ body{margin:0;font-family:Pretendard,-apple-system,"Apple SD Gothic Neo","Malgun
 a{color:var(--navy2)}
 header.top{background:var(--navy);color:#fff;padding:22px 20px 0}
 header.top .wrap{max-width:980px;margin:0 auto}
-header.top h1{margin:0;font-size:1.45rem;letter-spacing:-.02em}
+header.top h1{margin:0;font-size:clamp(1.85rem,4.6vw,2.5rem);font-weight:800;letter-spacing:-.03em;line-height:1.2;
+  background:linear-gradient(90deg,#ffe29a 0%,#ffc857 55%,#ffb347 100%);-webkit-background-clip:text;background-clip:text;color:#ffc857;-webkit-text-fill-color:transparent}
+header.top .wrap{padding-top:4px}
 header.top .maker{font-size:.86rem;color:#c9d6ea;margin:-.4rem 0 1rem}
 header.top .maker b{color:#fff;font-weight:700}
 header.top p{margin:.35rem 0 1rem;color:#c9d6ea;font-size:.95rem}
